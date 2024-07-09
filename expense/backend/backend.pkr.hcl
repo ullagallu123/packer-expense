@@ -25,10 +25,9 @@ build {
   }
 
   provisioner "shell" {
-    inline = ["chmod +x /tmp/backend.sh"]
-  }
-
-  provisioner "shell" {
-    inline = ["/tmp/backend.sh"]
+    inline = [
+      "chmod +x /tmp/backend.sh",
+      "sudo /tmp/backend.sh"
+      ]
   }
 }
