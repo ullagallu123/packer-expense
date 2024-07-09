@@ -7,21 +7,28 @@ packer {
   }
 }
 
-source "amazon-ebs" "backend" {
+source "amazon-ebs" "amz2023" {
   ami_name      = "backend"
   instance_type = "t3.micro"
-  region        = "ap-south-1"
-  source_ami = "ami-01376101673c89611"
+  region        = "us-east-1"
+  source_ami = "ami-06c68f701d8090592"
   ssh_username = "ec2-user"
 }
 
 build {
-    name = "my-first-build"
-    sources = ["source.amazon-ebs.backend"]
+  name    = "my-first-build"
+  sources = ["source.amazon-ebs.amz2023"]
 
-    provisioner "shell" {
-        inline = [
-            
-        ]
-    }
+  provisioner "file" {
+    source      = "backend.sh"
+    destination = "/tmp/backend.sh"
+  }
+
+  provisioner "shell" {
+    inline = ["chmod +x /tmp/backend.sh"]
+  }
+
+  provisioner "shell" {
+    inline = ["/tmp/backend.sh"]
+  }
 }

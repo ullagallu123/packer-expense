@@ -7,25 +7,28 @@ packer {
   }
 }
 
-source "amazon-ebs" "ubuntu" {
-  ami_name      = "learn-packer-linux-aws"
+source "amazon-ebs" "amz2023" {
+  ami_name      = "frontend"
   instance_type = "t3.micro"
-  region        = "ap-south-1"
-  source_ami = "ami-0c2af51e265bd5e0e"
-  ssh_username = "ubuntu"
+  region        = "us-east-1"
+  source_ami = "ami-06c68f701d8090592"
+  ssh_username = "ec2-user"
 }
 
 build {
-    name = "my-first-build"
-    sources = ["source.amazon-ebs.ubuntu"]
+  name    = "my-first-build"
+  sources = ["source.amazon-ebs.amz2023"]
 
-    provisioner "shell" {
-        inline = [
-            "sudo apt update",
-            "sudo apt install nginx -y",
-            "sudo systemctl enable nginx",
-            "sudo systemctl start nginx"
+  provisioner "file" {
+    source      = "frontend.sh"
+    destination = "/tmp/frontend.sh"
+  }
 
-        ]
-    }
+  provisioner "shell" {
+    inline = ["chmod +x /tmp/frontend.sh"]
+  }
+
+  provisioner "shell" {
+    inline = ["/tmp/frontend.sh"]
+  }
 }
