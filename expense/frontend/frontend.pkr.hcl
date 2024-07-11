@@ -16,7 +16,7 @@ source "amazon-ebs" "amz2023" {
 }
 
 build {
-  name    = frontend"
+  name    = "frontend"
   sources = ["source.amazon-ebs.amz2023"]
 
   provisioner "file" {
