@@ -16,7 +16,7 @@ source "amazon-ebs" "amz2023" {
 }
 
 build {
-  name    = "my-first-build"
+  name    = "backend"
   sources = ["source.amazon-ebs.amz2023"]
 
   provisioner "file" {
