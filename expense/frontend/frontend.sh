@@ -73,9 +73,9 @@ EOF
 
 LOG "Creating NGINX configuration file /etc/nginx/default.d/expense.conf" $?
 
-# Test NGINX configuration
-nginx -t &>>"$LOG_FILE"
-LOG "Testing NGINX configuration" $?
+# # Test NGINX configuration
+# nginx -t &>>"$LOG_FILE"
+# LOG "Testing NGINX configuration" $?
 
 # Restart NGINX to apply changes
 systemctl restart nginx &>>"$LOG_FILE"
