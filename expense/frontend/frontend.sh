@@ -73,15 +73,12 @@ EOF
 
 LOG "Creating NGINX configuration file /etc/nginx/default.d/expense.conf" $?
 
-# # Test NGINX configuration
-# nginx -t &>>"$LOG_FILE"
-# LOG "Testing NGINX configuration" $?
+# Test NGINX configuration
+nginx -t &>>"$LOG_FILE"
+LOG "Testing NGINX configuration" $?
 
 # Restart NGINX to apply changes
-systemctl stop nginx &>>"$LOG_FILE"
-LOG "Stopping nginx service" $?
-
-# systemctl start nginx &>>"$LOG_FILE"
-# LOG "Starting nginx service" $?
+systemctl restart nginx &>>"$LOG_FILE"
+LOG "Starting nginx service" $?
 
 echo "Script execution completed successfully." | tee -a "$LOG_FILE"
