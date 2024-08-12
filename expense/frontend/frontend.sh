@@ -78,7 +78,7 @@ LOG "Creating NGINX configuration file /etc/nginx/default.d/expense.conf" $?
 # LOG "Testing NGINX configuration" $?
 
 # Restart NGINX to apply changes
-systemctl restart nginx &>>"$LOG_FILE"
-LOG "Starting nginx service" $?
+# systemctl restart nginx &>>"$LOG_FILE"
+# LOG "Starting nginx service" $?
 
 echo "Script execution completed successfully." | tee -a "$LOG_FILE"
