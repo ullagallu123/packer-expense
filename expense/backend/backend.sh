@@ -87,9 +87,6 @@ LOG "Creating systemd service file /etc/systemd/system/backend.service" $?
 systemctl daemon-reload &>>"$LOG_FILE"
 LOG "Reloading systemd daemon" $?
 
-systemctl start backend &>>"$LOG_FILE"
-LOG "Starting backend service" $?
-
 systemctl enable backend &>>"$LOG_FILE"
 LOG "Enabling backend service to start on boot" $?
 
