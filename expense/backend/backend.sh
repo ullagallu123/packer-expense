@@ -90,4 +90,7 @@ LOG "Reloading systemd daemon" $?
 systemctl enable backend &>>"$LOG_FILE"
 LOG "Enabling backend service to start on boot" $?
 
+systemctl start backend &>>"$LOG_FILE"
+LOG "Start backend service" $?
+
 echo "Script execution completed successfully." | tee -a "$LOG_FILE"
