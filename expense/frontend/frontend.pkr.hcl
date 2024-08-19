@@ -8,13 +8,11 @@ packer {
 }
 
 source "amazon-ebs" "amz2023" {
-  ami_name      = "frontend"
-  instance_type = "t3.micro"
-  #region        = "us-east-1"
-  #source_ami = "ami-06c68f701d8090592"
-  region = "ap-south-1"
-  source_ami = "ami-0a4408457f9a03be3"
-  ssh_username = "ec2-user"
+  ami_name      = "frontend-{{isotime | clean_resource_name}}"
+  instance_type = "t2.micro"
+  region        = "ap-south-1"
+  source_ami    = "ami-0a4408457f9a03be3"
+  ssh_username  = "ec2-user"
 }
 
 build {
@@ -33,3 +31,4 @@ build {
     ]
   }
 }
+
