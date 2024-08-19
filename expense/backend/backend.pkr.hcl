@@ -8,7 +8,7 @@ packer {
 }
 
 source "amazon-ebs" "amz2023" {
-  ami_name      = "backend"
+  ami_name      = "backend-{{timestamp}}"
   instance_type = "t2.micro"
   #region = "us-east-1"
   #source_ami = "ami-06c68f701d8090592"
