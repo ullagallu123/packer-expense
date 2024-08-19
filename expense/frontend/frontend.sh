@@ -59,120 +59,34 @@ fi
 
 # Configure NGINX for the frontend
 cat <<EOF | tee /etc/nginx/default.d/expense.conf &>>"$LOG_FILE"
-events {}
+server {
+    listen 80;
+    server_name expense.test.ullagallu.cloud;
 
-http {
-    include /etc/nginx/mime.types;
-    default_type application/octet-stream;
+    root /usr/share/nginx/html;
+    index index.html;
 
-    # Log format
-    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
-                    '$status $body_bytes_sent "$http_referer" '
-                    '"$http_user_agent" "$http_x_forwarded_for"';
+    location / {
+        try_files $uri $uri/ =404;
+    }
 
-    access_log /var/log/nginx/access.log main;
-    error_log /var/log/nginx/error.log;
-
-    # Default server configuration
-    server {
-        listen 80 default_server;
-        server_name localhost;
-
-        root /usr/share/nginx/html;
-        index index.html;
-
-        location / {
-            try_files $uri $uri/ =404;
-        }
-
-        location /api/ {
-            proxy_pass http://backend.test.ullagallu.cloud:8080/;
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-        
-        location /health {
-            stub_status on;
-            access_log off;
-        }
-
-        # Additional location blocks or configurations can go here
+    location /api/ {
+        proxy_pass http://backend.test.ullagallu.cloud:8080/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    location /health {
+        stub_status on;
+        access_log off;
     }
 }
+
 EOF
 
 LOG "Creating NGINX configuration file /etc/nginx/default.d/expense.conf" $?
 
 echo "Script execution completed successfully." | tee -a "$LOG_FILE"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# events {}
-
-# http {
-#     include /etc/nginx/mime.types;
-#     default_type application/octet-stream;
-
-#     # Log format
-#     log_format main '$remote_addr - $remote_user [$time_local] "$request" '
-#                     '$status $body_bytes_sent "$http_referer" '
-#                     '"$http_user_agent" "$http_x_forwarded_for"';
-
-#     access_log /var/log/nginx/access.log main;
-#     error_log /var/log/nginx/error.log;
-
-#     # Default server configuration
-#     server {
-#         listen 80 default_server;
-#         server_name localhost;
-
-#         root /usr/share/nginx/html;
-#         index index.html;
-
-#         location / {
-#             try_files $uri $uri/ =404;
-#         }
-
-#         location /api/ {
-#             proxy_pass http://backend.test.ullagallu.cloud:8080/;
-#             proxy_http_version 1.1;
-#             proxy_set_header Host $host;
-#             proxy_set_header X-Real-IP $remote_addr;
-#             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-#             proxy_set_header X-Forwarded-Proto $scheme;
-#         }
-        
-#         location /health {
-#             stub_status on;
-#             access_log off;
-#         }
-
-#         # Additional location blocks or configurations can go here
-#     }
-# }
