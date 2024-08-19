@@ -59,32 +59,16 @@ fi
 
 # Configure NGINX for the frontend
 cat <<EOF | tee /etc/nginx/default.d/expense.conf &>>"$LOG_FILE"
-server {
-    listen 80;
-    server_name expense.test.ullagallu.cloud;
+proxy_http_version 1.1;
 
-    root /usr/share/nginx/html;
-    index index.html;
-
-    location / {
-        try_files $uri $uri/ =404;
-    }
-
-    location /api/ {
-        proxy_pass http://backend.test.ullagallu.cloud:8080/;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-    
-    location /health {
-        stub_status on;
-        access_log off;
-    }
+location /api/ {
+    proxy_pass http://backend.test.ullagallu.cloud/;  # Ensure trailing slash
 }
 
+location /health {
+    stub_status on;
+    access_log off;
+}
 EOF
 
 LOG "Creating NGINX configuration file /etc/nginx/default.d/expense.conf" $?
