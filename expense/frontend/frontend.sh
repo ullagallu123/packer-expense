@@ -86,7 +86,7 @@ http {
         }
 
         location /api/ {
-            proxy_pass http://backend.test.ullagallu.cloud/;
+            proxy_pass http://backend.test.ullagallu.cloud:8080/;
             proxy_http_version 1.1;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
