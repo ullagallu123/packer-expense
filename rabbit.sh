@@ -12,7 +12,7 @@ ENGINE_TYPE="RABBITMQ"
 DEPLOYMENT_MODE="SINGLE_INSTANCE"
 BROKER_INSTANCE_TYPE="mq.t3.micro"
 USER_NAME="roboshop"
-USER_PASSWORD="roboshop1234"  # Ensure the password meets the length requirement
+USER_PASSWORD="roboshop123"
 
 # Function to create the broker
 create_broker() {
@@ -53,17 +53,13 @@ get_broker_endpoint() {
         --region "$REGION" \
         --output json)
 
-    # Check if the broker details are fetched correctly
-    echo "Broker Details: $BROKER_DETAILS"
-
-    BROKER_ENDPOINT=$(echo "$BROKER_DETAILS" | jq -r '.BrokerInstances[0].Endpoints[0]')
+    BROKER_ENDPOINT=$(echo "$BROKER_DETAILS" | jq -r '.BrokerInstances[0].Endpoints[0]' | sed -e 's/amqps:\/\///' -e 's/:5671//')
 
     if [ -z "$BROKER_ENDPOINT" ]; then
         echo "Failed to fetch broker endpoint."
         exit 1
     fi
 
-    # Format the endpoint if necessary
     echo "$BROKER_ENDPOINT"
 }
 
@@ -108,8 +104,6 @@ CHANGE_BATCH=$(jq -n \
             }
         ]
     }')
-
-echo "Change Batch JSON: $CHANGE_BATCH"
 
 aws route53 change-resource-record-sets \
     --hosted-zone-id "$HOSTED_ZONE_ID" \
