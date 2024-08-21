@@ -13,6 +13,7 @@ DEPLOYMENT_MODE="SINGLE_INSTANCE"
 BROKER_INSTANCE_TYPE="mq.t3.micro"
 USER_NAME="rabbit"
 USER_PASSWORD="rabbitmq1"
+PUBLICLY_ACCESSIBLE="true"  # Set to "false" if you do not want the broker to be publicly accessible
 
 # Check if broker exists
 echo "Checking if Amazon MQ broker '$BROKER_NAME' already exists..."
@@ -34,6 +35,7 @@ else
         --deployment-mode "$DEPLOYMENT_MODE" \
         --host-instance-type "$BROKER_INSTANCE_TYPE" \
         --users Username="$USER_NAME",Password="$USER_PASSWORD" \
+        --publicly-accessible "$PUBLICLY_ACCESSIBLE" \
         --region "$REGION" \
         --output json)
 
