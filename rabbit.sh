@@ -48,7 +48,6 @@ create_broker() {
 # Function to fetch broker endpoint
 get_broker_endpoint() {
     echo "Fetching broker details..."
-    sleep 60  # Wait for the broker to become available
     BROKER_DETAILS=$(aws mq describe-broker \
         --broker-id "$1" \
         --region "$REGION" \
