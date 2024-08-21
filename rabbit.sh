@@ -66,14 +66,14 @@ get_broker_endpoint() {
 
 # Check if broker exists
 echo "Checking if Amazon MQ broker '$BROKER_NAME' already exists..."
-EXISTING_BROKER=$(aws mq describe-broker \
-    --broker-id "$BROKER_NAME" \
-    --region "$REGION" \
-    --output json 2>/dev/null)
+EXISTING_BROKER=$(aws mq list-brokers --region "$REGION" --output json)
 
-if [ $? -eq 0 ]; then
-    echo "Amazon MQ broker with name '$BROKER_NAME' already exists."
-    BROKER_ID=$(echo "$EXISTING_BROKER" | jq -r '.BrokerId')
+# Check if the broker exists in the list
+BROKER_ID=$(echo "$EXISTING_BROKER" | jq -r --arg BROKER_NAME "$BROKER_NAME" \
+    '.BrokerSummaries[] | select(.BrokerName == $BROKER_NAME) | .BrokerId')
+
+if [ -n "$BROKER_ID" ]; then
+    echo "Amazon MQ broker with name '$BROKER_NAME' already exists with ID: $BROKER_ID"
     BROKER_ENDPOINT=$(get_broker_endpoint "$BROKER_ID")
 else
     BROKER_ID=$(create_broker)
@@ -84,25 +84,31 @@ echo "Broker endpoint is: $BROKER_ENDPOINT"
 
 # Create or update Route 53 DNS record
 echo "Updating Route 53 DNS record..."
-aws route53 change-resource-record-sets \
-    --hosted-zone-id "$HOSTED_ZONE_ID" \
-    --change-batch '{
+CHANGE_BATCH=$(jq -n \
+    --arg RECORD_NAME "$RECORD_NAME" \
+    --arg TTL "$TTL" \
+    --arg BROKER_ENDPOINT "$BROKER_ENDPOINT" \
+    '{
         "Changes": [
             {
                 "Action": "UPSERT",
                 "ResourceRecordSet": {
-                    "Name": "'"$RECORD_NAME"'",
+                    "Name": $RECORD_NAME,
                     "Type": "CNAME",
-                    "TTL": '"$TTL"',
+                    "TTL": ($TTL | tonumber),
                     "ResourceRecords": [
                         {
-                            "Value": "'"$BROKER_ENDPOINT"'"
+                            "Value": $BROKER_ENDPOINT
                         }
                     ]
                 }
             }
         ]
-    }' \
+    }')
+
+aws route53 change-resource-record-sets \
+    --hosted-zone-id "$HOSTED_ZONE_ID" \
+    --change-batch "$CHANGE_BATCH" \
     --region "$REGION" \
     --output json
 
