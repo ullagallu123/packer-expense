@@ -105,6 +105,9 @@ CHANGE_BATCH=$(jq -n \
         ]
     }')
 
+# Debug: Print the Change Batch JSON
+echo "Change Batch JSON: $CHANGE_BATCH"
+
 aws route53 change-resource-record-sets \
     --hosted-zone-id "$HOSTED_ZONE_ID" \
     --change-batch "$CHANGE_BATCH" \
