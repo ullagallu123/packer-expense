@@ -12,7 +12,7 @@ ENGINE_TYPE="RABBITMQ"
 DEPLOYMENT_MODE="SINGLE_INSTANCE"
 BROKER_INSTANCE_TYPE="mq.t3.micro"
 USER_NAME="roboshop"
-USER_PASSWORD="roboshop123"
+USER_PASSWORD="roboshop1234"  # Updated to be at least 12 characters
 
 # Function to create the broker
 create_broker() {
