@@ -15,18 +15,8 @@ USER_NAME="rabbit"
 USER_PASSWORD="rabbitmq1"
 PUBLICLY_ACCESSIBLE="true"  # Set to "false" if you do not want the broker to be publicly accessible
 
-# Check if broker exists
-echo "Checking if Amazon MQ broker '$BROKER_NAME' already exists..."
-EXISTING_BROKER=$(aws mq describe-broker \
-    --broker-id "$BROKER_NAME" \
-    --region "$REGION" \
-    --output json 2>/dev/null)
-
-if [ $? -eq 0 ]; then
-    echo "Amazon MQ broker with name '$BROKER_NAME' already exists."
-    BROKER_ID=$(echo "$EXISTING_BROKER" | jq -r '.BrokerId')
-    BROKER_ENDPOINT=$(echo "$EXISTING_BROKER" | jq -r '.Endpoints[0]')
-else
+# Function to create the broker
+create_broker() {
     echo "Creating Amazon MQ broker '$BROKER_NAME'..."
 
     CREATE_OUTPUT=$(aws mq create-broker \
@@ -53,20 +43,41 @@ else
     fi
 
     echo "Created Amazon MQ broker with ID: $BROKER_ID"
+    echo "$BROKER_ID"
+}
 
-    # Fetch broker details to get the endpoint
+# Function to fetch broker endpoint
+get_broker_endpoint() {
     echo "Fetching broker details..."
     BROKER_DETAILS=$(aws mq describe-broker \
-        --broker-id "$BROKER_ID" \
+        --broker-id "$1" \
         --region "$REGION" \
         --output json)
 
     BROKER_ENDPOINT=$(echo "$BROKER_DETAILS" | jq -r '.Endpoints[0]')
-    
+
     if [ -z "$BROKER_ENDPOINT" ]; then
         echo "Failed to fetch broker endpoint."
         exit 1
     fi
+
+    echo "$BROKER_ENDPOINT"
+}
+
+# Check if broker exists
+echo "Checking if Amazon MQ broker '$BROKER_NAME' already exists..."
+EXISTING_BROKER=$(aws mq describe-broker \
+    --broker-id "$BROKER_NAME" \
+    --region "$REGION" \
+    --output json 2>/dev/null)
+
+if [ $? -eq 0 ]; then
+    echo "Amazon MQ broker with name '$BROKER_NAME' already exists."
+    BROKER_ID=$(echo "$EXISTING_BROKER" | jq -r '.BrokerId')
+    BROKER_ENDPOINT=$(get_broker_endpoint "$BROKER_ID")
+else
+    BROKER_ID=$(create_broker)
+    BROKER_ENDPOINT=$(get_broker_endpoint "$BROKER_ID")
 fi
 
 echo "Broker endpoint is: $BROKER_ENDPOINT"
