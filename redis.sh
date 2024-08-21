@@ -7,32 +7,45 @@ HOSTED_ZONE_ID="Z0734300103KWSRCOUTDI"
 RECORD_NAME="rb-redis.test.ullagallu.cloud"
 TTL="1"
 
-# Create Redis Serverless cache
-echo "Creating Redis Serverless cache..."
-CREATE_OUTPUT=$(aws elasticache create-serverless-cache \
-    --serverless-cache-name "$CACHE_NAME" \
-    --engine redis \
+# Check if Redis Serverless cache already exists
+echo "Checking if Redis Serverless cache already exists..."
+EXISTING_CACHE=$(aws elasticache describe-serverless-caches \
     --region "$REGION" \
-    --output json)  # Ensure JSON output
+    --output json | jq -r \
+    --arg CACHE_NAME "$CACHE_NAME" \
+    '.ServerlessCaches[] | select(.ServerlessCacheName == $CACHE_NAME) | .ServerlessCacheId')
 
-# Debugging: Print the create output
-echo "Create Output: $CREATE_OUTPUT"
+if [ -n "$EXISTING_CACHE" ]; then
+    echo "Redis Serverless cache with name '$CACHE_NAME' already exists with ID: $EXISTING_CACHE"
+    CACHE_ID="$EXISTING_CACHE"
+else
+    # Create Redis Serverless cache
+    echo "Creating Redis Serverless cache..."
+    CREATE_OUTPUT=$(aws elasticache create-serverless-cache \
+        --serverless-cache-name "$CACHE_NAME" \
+        --engine redis \
+        --region "$REGION" \
+        --output json)
 
-# Extract Cache ID from create output
-CACHE_ID=$(echo "$CREATE_OUTPUT" | jq -r '.ServerlessCache.ServerlessCacheId')
+    # Debugging: Print the create output
+    echo "Create Output: $CREATE_OUTPUT"
 
-if [ -z "$CACHE_ID" ]; then
-    echo "Failed to create Redis Serverless cache or retrieve Cache ID."
-    exit 1
+    # Extract Cache ID from create output
+    CACHE_ID=$(echo "$CREATE_OUTPUT" | jq -r '.ServerlessCache.ServerlessCacheId')
+
+    if [ -z "$CACHE_ID" ]; then
+        echo "Failed to create Redis Serverless cache or retrieve Cache ID."
+        exit 1
+    fi
+
+    echo "Created Redis Serverless cache with ID: $CACHE_ID"
 fi
-
-echo "Created Redis Serverless cache with ID: $CACHE_ID"
 
 # Fetch Redis endpoint
 echo "Fetching Redis endpoint..."
 ENDPOINT_OUTPUT=$(aws elasticache describe-serverless-caches \
     --region "$REGION" \
-    --output json)  # Ensure JSON output
+    --output json)
 
 # Debugging: Print the endpoint output
 echo "Endpoint Output: $ENDPOINT_OUTPUT"
