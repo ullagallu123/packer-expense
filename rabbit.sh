@@ -57,7 +57,7 @@ get_broker_endpoint() {
     # Check if the broker details are fetched correctly
     echo "Broker Details: $BROKER_DETAILS"
 
-    BROKER_ENDPOINT=$(echo "$BROKER_DETAILS" | jq -r '.Endpoints[0]')
+    BROKER_ENDPOINT=$(echo "$BROKER_DETAILS" | jq -r '.BrokerInstances[0].Endpoints[0]')
 
     if [ -z "$BROKER_ENDPOINT" ]; then
         echo "Failed to fetch broker endpoint."
