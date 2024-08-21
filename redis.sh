@@ -2,7 +2,7 @@
 
 # Set AWS region and other variables
 REGION="ap-south-1"
-CACHE_NAME="instana-redis"
+CACHE_NAME="instana-redis1"
 HOSTED_ZONE_ID="Z0734300103KWSRCOUTDI"
 RECORD_NAME="rb-redis.test.ullagallu.cloud"
 TTL="1"
