@@ -94,3 +94,5 @@ systemctl start backend &>>"$LOG_FILE"
 LOG "Start backend service" $?
 
 echo "Script execution completed successfully." | tee -a "$LOG_FILE"
+
+

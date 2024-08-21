@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Variables
-DB_INSTANCE_IDENTIFIER="expense"
+DB_INSTANCE_IDENTIFIER="instana"
 DB_INSTANCE_CLASS="db.t3.micro"
 ENGINE="mysql"
 ALLOCATED_STORAGE=20
 MASTER_USERNAME="root"
-MASTER_USER_PASSWORD="ExpenseApp1"
+MASTER_USER_PASSWORD="RoboShop1"
 ZONE_NAME="test.ullagallu.cloud"
-DOMAIN_NAME="expense.db.${ZONE_NAME}"
+DOMAIN_NAME="rb-mysql.${ZONE_NAME}"
 DB_INSTANCE_ENDPOINT=""
 
 # Get the hosted zone ID for the specified zone name
