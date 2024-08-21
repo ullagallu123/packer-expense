@@ -1,63 +1,97 @@
 #!/bin/bash            
-AWS_REGION="ap-south-1"                  
-REDIS_CLUSTER_ID="my-redis-cluster"      
-REDIS_NODE_TYPE="cache.t3.micro"          
-REDIS_ENGINE_VERSION="7.x"                
-REDIS_PORT="6379"                         
-REDIS_NAME="rb-redis.test.ullagallu.cloud" 
+REGION="ap-south-1"                  
+CACHE_NAME="instana-redis"       
+HOSTED_ZONE_ID="Z0734300103KWSRCOUTDI"        
+RECORD_NAME="rb-redis.test.ullagallu.cloud" 
+TTL="1"
 
-ROUTE_53_HOSTED_ZONE_ID="Z0734300103KWSRCOUTDI" 
-# Check if the Redis cluster already exists
-echo "Checking if Redis cluster '$REDIS_CLUSTER_ID' exists..."
-CLUSTER_STATUS=$(aws elasticache describe-cache-clusters --cache-cluster-id "$REDIS_CLUSTER_ID" --query "CacheClusters[0].CacheClusterStatus" --output text --profile "$AWS_PROFILE" --region "$AWS_REGION" 2>/dev/null)
-
-if [ "$CLUSTER_STATUS" == "available" ]; then
-    echo "Redis cluster '$REDIS_CLUSTER_ID' already exists and is available."
-else
-    echo "Creating Redis cluster '$REDIS_CLUSTER_ID'..."
-    aws elasticache create-cache-cluster \
-        --cache-cluster-id "$REDIS_CLUSTER_ID" \
-        --cache-node-type "$REDIS_NODE_TYPE" \
+create_redis_serverless() {
+    echo "Creating Redis Serverless cache..."
+    CACHE_ID=$(aws elasticache create-serverless-cache \
+        --serverless-cache-name "$CACHE_NAME" \
         --engine redis \
-        --engine-version "$REDIS_ENGINE_VERSION" \
-        --num-cache-nodes 1 \
-        --port "$REDIS_PORT" \
-        --region "$AWS_REGION"
-    
-    echo "Waiting for Redis cluster to be available..."
-    aws elasticache wait cache-cluster-available \
-        --cache-cluster-id "$REDIS_CLUSTER_ID" \
-        --region "$AWS_REGION"
-    
-    echo "Redis cluster '$REDIS_CLUSTER_ID' created and available."
-fi
+        --region "$REGION" \
+        --query 'ServerlessCache.CacheClusterId' \
+        --output text)
+    if [ $? -ne 0 ]; then
+        echo "Failed to create Redis Serverless cache."
+        exit 1
+    fi
+    echo "Created Redis Serverless cache with ID: $CACHE_ID"
+}
 
-# Get the Redis endpoint
-REDIS_ENDPOINT=$(aws elasticache describe-cache-clusters --cache-cluster-id "$REDIS_CLUSTER_ID" --query "CacheClusters[0].Endpoint.Address" --output text --profile "$AWS_PROFILE" --region "$AWS_REGION")
+# Function to get Redis endpoint
+get_redis_endpoint() {
+    echo "Fetching Redis endpoint..."
+    ENDPOINT=$(aws elasticache describe-serverless-cache \
+        --serverless-cache-name "$CACHE_NAME" \
+        --region "$REGION" \
+        --query 'ServerlessCache.Endpoint.Address' \
+        --output text)
+    if [ $? -ne 0 ]; then
+        echo "Failed to fetch Redis endpoint."
+        exit 1
+    fi
+    echo "Redis endpoint: $ENDPOINT"
+}
 
-# Update Route 53 DNS record
-echo "Updating Route 53 DNS record for '$REDIS_NAME'..."
-aws route53 change-resource-record-sets \
-    --hosted-zone-id "$ROUTE_53_HOSTED_ZONE_ID" \
-    --change-batch '{
-        "Changes": [
-            {
-                "Action": "UPSERT",
-                "ResourceRecordSet": {
-                    "Name": "'"$REDIS_NAME"'",
-                    "Type": "CNAME",
-                    "TTL": 60,
-                    "ResourceRecords": [
-                        {
-                            "Value": "'"$REDIS_ENDPOINT"'"
-                        }
-                    ]
-                }
-            }
+# Function to update Route 53 DNS record
+update_route53_record() {
+    echo "Updating Route 53 DNS record..."
+    cat > change-batch.json << EOF
+{
+  "Comment": "Update DNS record for Redis Serverless cache",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "$RECORD_NAME",
+        "Type": "CNAME",
+        "TTL": $TTL,
+        "ResourceRecords": [
+          {
+            "Value": "$ENDPOINT"
+          }
         ]
-    }' \
-    --region "$AWS_REGION"
+      }
+    }
+  ]
+}
+EOF
 
-echo "DNS record for '$REDIS_NAME' updated to point to '$REDIS_ENDPOINT'."
+    aws route53 change-resource-record-sets \
+        --hosted-zone-id "$HOSTED_ZONE_ID" \
+        --change-batch file://change-batch.json \
+        --region "$REGION"
 
-echo "Script completed."
+    if [ $? -ne 0 ]; then
+        echo "Failed to update Route 53 DNS record."
+        exit 1
+    fi
+
+    # Wait for the DNS change to propagate
+    CHANGE_ID=$(aws route53 change-resource-record-sets \
+        --hosted-zone-id "$HOSTED_ZONE_ID" \
+        --change-batch file://change-batch.json \
+        --region "$REGION" \
+        --query 'ChangeInfo.Id' \
+        --output text)
+
+    aws route53 wait resource-record-set-changed \
+        --hosted-zone-id "$HOSTED_ZONE_ID" \
+        --change-id "$CHANGE_ID" \
+        --region "$REGION"
+
+    if [ $? -ne 0 ]; then
+        echo "Failed to wait for DNS record change to propagate."
+        exit 1
+    fi
+    echo "Route 53 DNS record updated successfully."
+}
+
+# Main script execution
+create_redis_serverless
+get_redis_endpoint
+update_route53_record
+
+echo "Script execution completed."
