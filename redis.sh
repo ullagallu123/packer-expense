@@ -52,8 +52,8 @@ echo "Endpoint Output: $ENDPOINT_OUTPUT"
 
 # Extract endpoint address from output
 ENDPOINT=$(echo "$ENDPOINT_OUTPUT" | jq -r \
-    --arg CACHE_ID "$CACHE_ID" \
-    '.ServerlessCaches[] | select(.ServerlessCacheId == $CACHE_ID) | .Endpoint.Address')
+    --arg CACHE_NAME "$CACHE_NAME" \
+    '.ServerlessCaches[] | select(.ServerlessCacheName == $CACHE_NAME) | .Endpoint.Address')
 
 if [ -z "$ENDPOINT" ]; then
     echo "Failed to fetch Redis endpoint."
