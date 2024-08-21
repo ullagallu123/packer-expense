@@ -1,19 +1,20 @@
 #!/bin/bash
 
+# Set AWS region and other variables
 REGION="ap-south-1"
 BROKER_NAME="instana-rabbit"
 HOSTED_ZONE_ID="Z0734300103KWSRCOUTDI"
 RECORD_NAME="rb-rabbit.test.ullagallu.cloud"
 TTL="1"
 
-
+# Define RabbitMQ broker details
 ENGINE_TYPE="RABBITMQ"
 DEPLOYMENT_MODE="SINGLE_INSTANCE"
 BROKER_INSTANCE_TYPE="mq.t3.micro"
 USER_NAME="rabbit"
 USER_PASSWORD="rabbitmq1"
 
-
+# Create or describe Amazon MQ broker
 echo "Checking if Amazon MQ broker '$BROKER_NAME' already exists..."
 
 EXISTING_BROKER=$(aws mq describe-broker \
@@ -30,7 +31,7 @@ else
 
     CREATE_OUTPUT=$(aws mq create-broker \
         --broker-name "$BROKER_NAME" \
-        --broker-engine-type "$ENGINE_TYPE" \
+        --engine-type "$ENGINE_TYPE" \
         --deployment-mode "$DEPLOYMENT_MODE" \
         --instance-type "$BROKER_INSTANCE_TYPE" \
         --users Username="$USER_NAME",Password="$USER_PASSWORD" \
