@@ -14,9 +14,8 @@ BROKER_INSTANCE_TYPE="mq.t3.micro"
 USER_NAME="rabbit"
 USER_PASSWORD="rabbitmq1"
 
-# Create or describe Amazon MQ broker
+# Check if broker exists
 echo "Checking if Amazon MQ broker '$BROKER_NAME' already exists..."
-
 EXISTING_BROKER=$(aws mq describe-broker \
     --broker-id "$BROKER_NAME" \
     --region "$REGION" \
@@ -33,7 +32,7 @@ else
         --broker-name "$BROKER_NAME" \
         --engine-type "$ENGINE_TYPE" \
         --deployment-mode "$DEPLOYMENT_MODE" \
-        --instance-type "$BROKER_INSTANCE_TYPE" \
+        --host-instance-type "$BROKER_INSTANCE_TYPE" \
         --users Username="$USER_NAME",Password="$USER_PASSWORD" \
         --region "$REGION" \
         --output json)
