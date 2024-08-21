@@ -11,8 +11,8 @@ TTL="1"
 ENGINE_TYPE="RABBITMQ"
 DEPLOYMENT_MODE="SINGLE_INSTANCE"
 BROKER_INSTANCE_TYPE="mq.t3.micro"
-USER_NAME="rabbit"
-USER_PASSWORD="rabbitmq1"
+USER_NAME="roboshop"
+USER_PASSWORD="roboshop123"
 
 # Function to create the broker
 create_broker() {
