@@ -3,8 +3,8 @@ aws ecs register-task-definition \
     --family web \
     --network-mode awsvpc \
     --requires-compatibilities FARGATE \
-    --cpu "256" \       # 0.25 vCPU
-    --memory "512" \    # 512 MiB
+    --cpu "256" \      
+    --memory "512" \    
     --execution-role-arn arn:aws:iam::806962169196:role/ecsTaskExecutionRole1 \
     --container-definitions '[
         {
