@@ -3,7 +3,7 @@ aws ecs register-task-definition \
     --family shipping \
     --network-mode awsvpc \
     --requires-compatibilities FARGATE \
-    --cpu "256" \      
+    --cpu "256" \
     --memory "512" \
     --execution-role-arn arn:aws:iam::806962169196:role/ecsTaskExecutionRole1 \
     --container-definitions '[
