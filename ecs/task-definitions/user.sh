@@ -1,12 +1,14 @@
 aws ecs register-task-definition \
     --family user \
     --network-mode awsvpc \
+    --requires-compatibilities FARGATE \
+    --cpu "256" \       # 0.25 vCPU
+    --memory "512" \    # 512 MiB
+    --execution-role-arn arn:aws:iam::806962169196:role/ecsTaskExecutionRole1 \
     --container-definitions '[
         {
             "name": "user",
             "image": "siva9666/user-instana:v1",
-            "memory": 512,
-            "cpu": 256,
             "essential": true,
             "environment": [
                 {
@@ -27,6 +29,14 @@ aws ecs register-task-definition \
                     "containerPort": 8080,
                     "protocol": "tcp"
                 }
-            ]
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/user",
+                    "awslogs-region": "ap-south-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
         }
     ]'
