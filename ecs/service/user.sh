@@ -1,3 +1,4 @@
+#!/bin/bash
 aws ecs create-service \
     --cluster roboshop-cluster \
     --service-name user-service \

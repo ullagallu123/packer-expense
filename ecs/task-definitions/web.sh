@@ -1,3 +1,4 @@
+#!/bin/bash
 aws ecs register-task-definition \
     --family web \
     --network-mode awsvpc \
