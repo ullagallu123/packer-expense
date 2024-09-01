@@ -11,5 +11,4 @@ aws logs create-log-group --log-group-name /ecs/shipping
 aws logs create-log-group --log-group-name /ecs/user
 aws logs create-log-group --log-group-name /ecs/web
 
-
-for i in *.sh; do echo "Executing" $i; bash $i;done
+# for i in *.sh; do echo "Executing" $i; bash $i;done
