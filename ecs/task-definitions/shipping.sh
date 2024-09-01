@@ -14,7 +14,7 @@ aws ecs register-task-definition \
             "environment": [
                 {
                     "name": "DB_HOST",
-                    "value": "mysql"
+                    "value": "mysql.instana"
                 },
                 {
                     "name": "DB_PORT",
@@ -30,7 +30,7 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "CART_ENDPOINT",
-                    "value": "cart:8080"
+                    "value": "cart.instana:8080"
                 }
             ],
             "portMappings": [

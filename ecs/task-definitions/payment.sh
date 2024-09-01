@@ -14,7 +14,7 @@ aws ecs register-task-definition \
             "environment": [
                 {
                     "name": "CART_HOST",
-                    "value": "cart"
+                    "value": "cart.instana"
                 },
                 {
                     "name": "CART_PORT",
@@ -22,7 +22,7 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "USER_HOST",
-                    "value": "user"
+                    "value": "user.instana"
                 },
                 {
                     "name": "USER_PORT",
@@ -30,7 +30,7 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "AMQP_HOST",
-                    "value": "rabbit"
+                    "value": "rabbit.instana"
                 },
                 {
                     "name": "AMQP_USER",

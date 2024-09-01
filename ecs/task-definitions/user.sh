@@ -18,11 +18,11 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "MONGO_URL",
-                    "value": "mongodb://mongo:27017/users"
+                    "value": "mongodb://mongo.instana:27017/users"
                 },
                 {
                     "name": "REDIS_HOST",
-                    "value": "redis"
+                    "value": "redis.instana"
                 }
             ],
             "portMappings": [

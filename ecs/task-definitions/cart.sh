@@ -14,7 +14,7 @@ aws ecs register-task-definition \
             "environment": [
                 {
                     "name": "CATALOGUE_HOST",
-                    "value": "catalogue"
+                    "value": "catalogue.instana"
                 },
                 {
                     "name": "CATALOGUE_PORT",
@@ -22,7 +22,7 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "REDIS_HOST",
-                    "value": "redis"
+                    "value": "redis.instana"
                 }
             ],
             "portMappings": [
