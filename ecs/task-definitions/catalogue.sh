@@ -18,7 +18,7 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "MONGO_URL",
-                    "value": "mongodb://mongo:27017/catalogue"
+                    "value": "mongodb://mongo.instana:27017/catalogue"
                 }
             ],
             "portMappings": [
