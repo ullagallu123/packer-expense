@@ -50,6 +50,11 @@ aws servicediscovery create-service \
     --namespace-id ns-dqhk4l7ogtngs2wi \
     --dns-config "NamespaceId=ns-dqhk4l7ogtngs2wi,RoutingPolicy=WEIGHTED,DnsRecords=[{Type=A,TTL=60}]"
 
+aws servicediscovery create-service \
+    --name debug \
+    --namespace-id ns-dqhk4l7ogtngs2wi \
+    --dns-config "NamespaceId=ns-dqhk4l7ogtngs2wi,RoutingPolicy=WEIGHTED,DnsRecords=[{Type=A,TTL=60}]"
+
 aws servicediscovery list-services \
     --query "Services[*].[Id,Name]" \
     --output table
