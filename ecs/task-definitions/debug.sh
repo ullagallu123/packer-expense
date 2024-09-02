@@ -13,15 +13,6 @@ aws ecs register-task-definition \
             "image": "siva9666/debug-utility:v1",
             "essential": true,
             "command": ["/bin/bash", "-c", "while true; do echo Running; sleep 3600; done"],
-            "portMappings": [],
-            # "logConfiguration": {
-            #     "logDriver": "awslogs",
-            #     "options": {
-            #         "awslogs-group": "/ecs/debug-utility",
-            #         "awslogs-region": "ap-south-1",
-            #         "awslogs-stream-prefix": "ecs"
-            #     }
-            # }
+            "portMappings": []
         }
     ]'
-
