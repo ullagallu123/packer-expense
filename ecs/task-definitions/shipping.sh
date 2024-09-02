@@ -30,7 +30,7 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "CART_ENDPOINT",
-                    "value": "cart-service:8080"
+                    "value": "cart.instana:8080"
                 }
             ],
             "portMappings": [
