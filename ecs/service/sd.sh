@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List all services in the cluster
-services=$(aws ecs list-services --cluster instana --query "serviceArns[]" --output text)
+services=$(aws ecs list-services --cluster roboshop --query "serviceArns[]" --output text)
 
 # Loop through each service and delete it
 for service in $services; do
