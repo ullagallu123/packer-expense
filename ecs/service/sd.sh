@@ -6,5 +6,5 @@ services=$(aws ecs list-services --cluster roboshop --query "serviceArns[]" --ou
 # Loop through each service and delete it
 for service in $services; do
     echo "Deleting service: $service"
-    aws ecs delete-service --cluster instana --service "$service" --force
+    aws ecs delete-service --cluster roboshop --service "$service" --force
 done
