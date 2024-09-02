@@ -14,7 +14,7 @@ aws ecs register-task-definition \
             "essential": true,
             "linuxParameters": {
                 "initProcessEnabled": true
-            }
+            },
             "environment": [
                 {
                     "name": "MYSQL_ROOT_PASSWORD",
