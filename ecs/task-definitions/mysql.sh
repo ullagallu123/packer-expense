@@ -12,6 +12,9 @@ aws ecs register-task-definition \
             "name": "mysql",
             "image": "siva9666/mysql-instana:v1",
             "essential": true,
+            "linuxParameters": {
+                "initProcessEnabled": true
+            }
             "environment": [
                 {
                     "name": "MYSQL_ROOT_PASSWORD",
