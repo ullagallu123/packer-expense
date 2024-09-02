@@ -1,6 +1,7 @@
 aws ecs create-service \
     --cluster roboshop \
     --service-name debug-utility-service \
+    --enable-execute-command \
     --task-definition debug-utility \
     --desired-count 1 \
     --launch-type FARGATE \
