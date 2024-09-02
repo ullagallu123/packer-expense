@@ -1,3 +1,4 @@
+#!/bin/bash
 aws ecs create-service \
     --cluster roboshop \
     --service-name debug-utility-service \
