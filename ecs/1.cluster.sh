@@ -1,5 +1,5 @@
 #!/bin/bash
-aws ecs create-cluster --cluster-name roboshop-cluster
+aws ecs create-cluster --cluster-name roboshop
 
 # aws servicediscovery create-private-dns-namespace \
 #   --name roboshop.local \

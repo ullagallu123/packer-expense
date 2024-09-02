@@ -1,6 +1,6 @@
 #!/bin/bash
 aws ecs create-service \
-    --cluster instana \
+    --cluster roboshop \
     --service-name payment-service \
     --task-definition payment \
     --desired-count 1 \

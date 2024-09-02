@@ -1,6 +1,6 @@
 #!/bin/bash
 aws ecs create-service \
-    --cluster instana \
+    --cluster roboshop \
     --service-name user-service \
     --task-definition user \
     --desired-count 1 \

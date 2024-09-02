@@ -1,6 +1,6 @@
 #!/bin/bash
 aws ecs create-service \
-    --cluster instana \
+    --cluster roboshop \
     --service-name redis-service \
     --task-definition redis \
     --desired-count 1 \

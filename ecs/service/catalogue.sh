@@ -1,6 +1,6 @@
 #!/bin/bash
 aws ecs create-service \
-    --cluster instana \
+    --cluster roboshop \
     --service-name catalogue-service \
     --task-definition catalogue \
     --desired-count 1 \

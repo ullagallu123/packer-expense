@@ -1,6 +1,6 @@
 #!/bin/bash
 aws ecs create-service \
-    --cluster instana \
+    --cluster roboshop \
     --service-name rabbit-service \
     --task-definition rabbit \
     --desired-count 1 \

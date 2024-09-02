@@ -1,6 +1,6 @@
 #!/bin/bash
 aws ecs create-service \
-    --cluster instana \
+    --cluster roboshop \
     --service-name dispatch-service \
     --task-definition dispatch \
     --desired-count 1 \

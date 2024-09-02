@@ -1,6 +1,6 @@
 #!/bin/bash
 aws ecs create-service \
-    --cluster instana \
+    --cluster roboshop \
     --service-name mysql-service \
     --task-definition mysql \
     --desired-count 1 \

@@ -1,6 +1,6 @@
 #!/bin/bash
 aws ecs create-service \
-    --cluster instana \
+    --cluster roboshop \
     --service-name mongo-service \
     --task-definition mongo \
     --desired-count 1 \
