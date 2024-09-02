@@ -11,7 +11,6 @@ aws ecs register-task-definition \
             "name": "debug",
             "image": "siva9666/debug-utility:v1",
             "essential": true,
-            "command": ["/bin/bash", "-c", "while true; do echo Running; sleep 3600; done"],
             "portMappings": [],
             "logConfiguration": {
                 "logDriver": "awslogs",
