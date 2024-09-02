@@ -22,7 +22,7 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "DB_USER",
-                    "value": "shipping"
+                    "value": "shipping" 
                 },
                 {
                     "name": "DB_PASSWD",

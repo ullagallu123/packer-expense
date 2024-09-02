@@ -1,5 +1,4 @@
 #!/bin/bash
-#!/bin/bash
 
 # List all services in the cluster
 services=$(aws ecs list-services --cluster instana --query "serviceArns[]" --output text)
