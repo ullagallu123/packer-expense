@@ -14,7 +14,7 @@ aws ecs register-task-definition \
             "environment": [
                 {
                     "name": "DB_HOST",
-                    "value": "mysql.instana"
+                    "value": "rb-mysql.test.ullagallu.cloud"
                 },
                 {
                     "name": "DB_PORT",
@@ -26,7 +26,7 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "DB_PASSWD",
-                    "value": "RoboShop@1"
+                    "value": "RoboShop1"
                 },
                 {
                     "name": "CART_ENDPOINT",
