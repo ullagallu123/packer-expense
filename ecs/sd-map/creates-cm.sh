@@ -1,10 +1,4 @@
 #!/bin/bash
-
-aws servicediscovery create-service \
-    --name mysql \
-    --namespace-id ns-dqhk4l7ogtngs2wi \
-    --dns-config "NamespaceId=ns-dqhk4l7ogtngs2wi,RoutingPolicy=WEIGHTED,DnsRecords=[{Type=A,TTL=60}]"
-
 aws servicediscovery create-service \
     --name mongo \
     --namespace-id ns-dqhk4l7ogtngs2wi \

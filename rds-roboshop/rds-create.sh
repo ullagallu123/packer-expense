@@ -7,7 +7,7 @@ ENGINE="mysql"
 ALLOCATED_STORAGE=20
 MASTER_USERNAME="root"
 MASTER_USER_PASSWORD="RoboShop1"
-ZONE_NAME="test.ullagallu.cloud"
+ZONE_NAME="ullagallu.cloud"
 DOMAIN_NAME="rb-mysql.${ZONE_NAME}"
 DB_INSTANCE_ENDPOINT=""
 
