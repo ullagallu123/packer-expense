@@ -26,7 +26,7 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "DB_PASSWD",
-                    "value": "RoboShop1"
+                    "value": "RoboShop@1"
                 },
                 {
                     "name": "CART_ENDPOINT",
