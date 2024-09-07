@@ -6,7 +6,6 @@ aws ecs register-task-definition \
     --cpu "500" \
     --memory "1024" \
     --execution-role-arn arn:aws:iam::427366301535:role/ecsTaskExecutionRole1 \
-    --execution-role-arn arn:aws:iam::427366301535:role/ecsTaskExecutionRole1 \
     --container-definitions '[
         {
             "name": "mysql",
