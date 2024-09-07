@@ -5,8 +5,8 @@ aws ecs register-task-definition \
     --requires-compatibilities FARGATE \
     --cpu "256" \
     --memory "512" \
-    --execution-role-arn arn:aws:iam::806962169196:role/ecsTaskExecutionRole1 \
-    --task-role-arn arn:aws:iam::806962169196:role/ecsTaskExecutionRole1 \
+    --execution-role-arn arn:aws:iam::427366301535:role/ecsTaskExecutionRole1 \
+    --execution-role-arn arn:aws:iam::427366301535:role/ecsTaskExecutionRole1 \
     --container-definitions '[
         {
             "name": "debug",

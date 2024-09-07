@@ -5,6 +5,11 @@ aws servicediscovery create-service \
     --dns-config "NamespaceId=ns-5zsaptwcvbg3ve2z,RoutingPolicy=WEIGHTED,DnsRecords=[{Type=A,TTL=60}]"
 
 aws servicediscovery create-service \
+    --name mysql \
+    --namespace-id ns-5zsaptwcvbg3ve2z \
+    --dns-config "NamespaceId=ns-5zsaptwcvbg3ve2z,RoutingPolicy=WEIGHTED,DnsRecords=[{Type=A,TTL=60}]"
+
+aws servicediscovery create-service \
     --name redis \
     --namespace-id ns-5zsaptwcvbg3ve2z \
     --dns-config "NamespaceId=ns-5zsaptwcvbg3ve2z,RoutingPolicy=WEIGHTED,DnsRecords=[{Type=A,TTL=60}]"
