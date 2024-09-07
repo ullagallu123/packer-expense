@@ -1,6 +1,5 @@
 #!/bin/bash
 aws logs create-log-group --log-group-name /ecs/mongo
-aws logs create-log-group --log-group-name /ecs/mysql
 aws logs create-log-group --log-group-name /ecs/rabbit
 aws logs create-log-group --log-group-name /ecs/redis
 aws logs create-log-group --log-group-name /ecs/catalogue
