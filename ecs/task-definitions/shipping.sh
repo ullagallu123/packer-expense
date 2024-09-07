@@ -1,28 +1,36 @@
 #!/bin/bash
 aws ecs register-task-definition \
-    --family cart \
+    --family shipping \
     --network-mode awsvpc \
     --requires-compatibilities FARGATE \
     --cpu "256" \
     --memory "512" \
-    --execution-role-arn arn:aws:iam::427366301535:role/ecsTaskExecutionRole1 \
+    --execution-role-arn arn:aws:iam::806962169196:role/ecsTaskExecutionRole1 \
     --container-definitions '[
         {
-            "name": "cart",
-            "image": "siva9666/cart-instana:v1",
+            "name": "shipping",
+            "image": "siva9666/shipping-instana:v1",
             "essential": true,
             "environment": [
                 {
-                    "name": "CATALOGUE_HOST",
-                    "value": "catalogue.instana"
+                    "name": "DB_HOST",
+                    "value": "mysql.instana"
                 },
                 {
-                    "name": "CATALOGUE_PORT",
-                    "value": "8080"
+                    "name": "DB_PORT",
+                    "value": "3306"
                 },
                 {
-                    "name": "REDIS_HOST",
-                    "value": "redis.instana"
+                    "name": "DB_USER",
+                    "value": "shipping" 
+                },
+                {
+                    "name": "DB_PASSWD",
+                    "value": "RoboShop1"
+                },
+                {
+                    "name": "CART_ENDPOINT",
+                    "value": "cart.instana:8080"
                 }
             ],
             "portMappings": [
@@ -34,7 +42,7 @@ aws ecs register-task-definition \
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/cart",
+                    "awslogs-group": "/ecs/shipping",
                     "awslogs-region": "ap-south-1",
                     "awslogs-stream-prefix": "ecs"
                 }
