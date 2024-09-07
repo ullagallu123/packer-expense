@@ -9,7 +9,7 @@ aws ecs register-task-definition \
     --container-definitions '[
         {
             "name": "web",
-            "image": "siva9666/web-instana:v2",
+            "image": "siva9666/web-instana:ecs",
             "essential": true,
             "portMappings": [
                 {
