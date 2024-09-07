@@ -3,8 +3,8 @@ aws ecs register-task-definition \
     --family mysql \
     --network-mode awsvpc \
     --requires-compatibilities FARGATE \
-    --cpu "500" \
-    --memory "1024" \
+    --cpu "1" \
+    --memory "1" \
     --execution-role-arn arn:aws:iam::427366301535:role/ecsTaskExecutionRole1 \
     --container-definitions '[
         {
