@@ -54,6 +54,11 @@ aws servicediscovery create-service \
     --namespace-id ns-5zsaptwcvbg3ve2z \
     --dns-config "NamespaceId=ns-5zsaptwcvbg3ve2z,RoutingPolicy=WEIGHTED,DnsRecords=[{Type=A,TTL=60}]"
 
+aws servicediscovery create-service \
+    --name dispatch \
+    --namespace-id ns-5zsaptwcvbg3ve2z \
+    --dns-config "NamespaceId=ns-5zsaptwcvbg3ve2z,RoutingPolicy=WEIGHTED,DnsRecords=[{Type=A,TTL=60}]"
+
 aws servicediscovery list-services \
     --query "Services[*].[Id,Name]" \
     --output table

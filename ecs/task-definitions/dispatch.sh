@@ -14,7 +14,7 @@ aws ecs register-task-definition \
             "environment": [
                 {
                     "name": "AMQP_HOST",
-                    "value": "rabbit"
+                    "value": "rabbit.instana"
                 },
                 {
                     "name": "AMQP_USER",
