@@ -43,14 +43,13 @@ if [ "$TARGET_GROUP_ARN" != "None" ]; then
     echo "Deleted Target Group: $TARGET_GROUP_ARN"
 fi
 
-# 5. Remove Load Balancer from ECS Service
-aws ecs update-service \
+# 5. Remove Load Balancer from ECS Service while maintaining desired count
+DESIRED_COUNT=$(aws ecs describe-services \
     --cluster $CLUSTER_NAME \
-    --service $SERVICE_NAME \
-    --load-balancers "[]" \
-    --query 'service.desiredCount' --output text > DESIRED_COUNT
+    --services $SERVICE_NAME \
+    --query 'services[0].desiredCount' \
+    --output text)
 
-DESIRED_COUNT=$(cat DESIRED_COUNT)
 aws ecs update-service \
     --cluster $CLUSTER_NAME \
     --service $SERVICE_NAME \
@@ -58,9 +57,6 @@ aws ecs update-service \
     --desired-count $DESIRED_COUNT
 
 echo "Load Balancer removed from ECS service $SERVICE_NAME while maintaining desired count: $DESIRED_COUNT"
-
-
-echo "Load Balancer removed from ECS service $SERVICE_NAME"
 
 # 6. Get the current Route 53 DNS record
 CURRENT_DNS_RECORD=$(aws route53 list-resource-record-sets \
