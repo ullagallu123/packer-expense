@@ -57,7 +57,7 @@ ALB_DNS=$(aws elbv2 describe-load-balancers \
 
 echo "ALB DNS Name: $ALB_DNS"
 
-# 6. Create Route 53 DNS record for ALB (Use UPSERT)
+# 6. Create or Update Route 53 DNS record for ALB
 aws route53 change-resource-record-sets \
   --hosted-zone-id $HOSTED_ZONE_ID \
   --change-batch '{
@@ -87,17 +87,14 @@ CERTIFICATE_ARN=$(aws acm request-certificate \
 echo "ACM Certificate requested: $CERTIFICATE_ARN"
 
 # 8. Check ACM Certificate Status
-while true; do
-    STATUS=$(aws acm describe-certificate --certificate-arn $CERTIFICATE_ARN \
-        --query 'Certificate.Status' --output text)
-    if [ "$STATUS" == "ISSUED" ]; then
-        echo "ACM Certificate is ISSUED"
-        break
-    else
-        echo "Waiting for ACM Certificate to be ISSUED..."
-        sleep 30
-    fi
-done
+STATUS=$(aws acm describe-certificate --certificate-arn $CERTIFICATE_ARN \
+    --query 'Certificate.Status' --output text)
+
+if [ "$STATUS" == "ISSUED" ]; then
+    echo "ACM Certificate is ISSUED"
+else
+    echo "ACM Certificate status is: $STATUS"
+fi
 
 # 9. Get DNS validation record
 VALIDATION_RECORD=$(aws acm describe-certificate \
