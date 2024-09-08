@@ -6,5 +6,5 @@ dashboards=$(aws cloudwatch list-dashboards --query 'DashboardEntries[*].Dashboa
 # Loop through each dashboard and delete it
 for dashboard in $dashboards; do
   echo "Deleting dashboard: $dashboard"
-  aws cloudwatch delete-dashboard --dashboard-name "$dashboard"
+  aws cloudwatch delete-dashboards --dashboard-names "$dashboard"
 done
