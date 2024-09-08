@@ -20,7 +20,7 @@ for i in "${!services[@]}"; do
 
   widget=$(cat <<EOF
     {
-      "type": "logs_insights",
+      "type": "log",
       "x": $(($i % 2 * 12)),
       "y": $(($i / 2 * 6)),
       "width": 12,
