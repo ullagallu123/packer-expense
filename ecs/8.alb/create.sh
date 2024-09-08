@@ -8,6 +8,7 @@ CLUSTER_NAME="roboshop"
 SERVICE_NAME="web-service"
 HOSTED_ZONE_ID="Z008243531Z79PQK793JX"
 DOMAIN_NAME="ecs-instana.ullagallu.cloud"
+CONTAINER_NAME="web"
 
 # 1. Create the Target Group
 TARGET_GROUP_ARN=$(aws elbv2 create-target-group \
@@ -45,7 +46,7 @@ echo "HTTP Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
 aws ecs update-service \
     --cluster $CLUSTER_NAME \
     --service $SERVICE_NAME \
-    --load-balancers targetGroupArn=$TARGET_GROUP_ARN,containerName=web,containerPort=80
+    --load-balancers targetGroupArn=$TARGET_GROUP_ARN,containerName=$CONTAINER_NAME,containerPort=80
 
 echo "ECS Service updated with Target Group ARN: $TARGET_GROUP_ARN"
 
