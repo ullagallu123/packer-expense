@@ -4,6 +4,9 @@
 region="ap-south-1"
 services=("mongo" "rabbit" "redis" "catalogue" "cart" "dispatch" "payment" "shipping" "user" "web" "mysql")
 
+# Define the log group prefix
+log_group_prefix="/ecs/"
+
 # Define dashboard name
 dashboard_name="All-Services-Log-Dashboard"
 
@@ -13,7 +16,8 @@ widgets="["
 # Loop through each service to create log insights widgets
 for i in "${!services[@]}"; do
   service="${services[$i]}"
-  
+  log_group="${log_group_prefix}${service}"
+
   widget=$(cat <<EOF
     {
       "type": "log",
@@ -22,7 +26,7 @@ for i in "${!services[@]}"; do
       "width": 12,
       "height": 6,
       "properties": {
-        "logGroupNames": ["/ecs/${service}"],
+        "logGroupNames": ["${log_group}"],
         "query": "fields @timestamp, @message | stats count() as logCount by bin(1h) | filter @timestamp > ago(1d)",
         "title": "${service} Service Logs"
       }
