@@ -8,7 +8,7 @@ services=("mongo" "rabbit" "redis" "catalogue" "cart" "dispatch" "payment" "ship
 log_group_prefix="/ecs/"
 
 # Define dashboard name
-dashboard_name="All-Services-Log-Dashboard"
+dashboard_name="Instana-Services-Log-Dashboard"
 
 # Initialize widgets array
 widgets="["
