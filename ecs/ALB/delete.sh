@@ -7,6 +7,7 @@ TARGET_GROUP_ARN=$(aws elbv2 describe-target-groups --names instana --query 'Tar
 LOAD_BALANCER_ARN=$(aws elbv2 describe-load-balancers --names roboshop --query 'LoadBalancers[0].LoadBalancerArn' --output text)
 HOSTED_ZONE_ID="Z008243531Z79PQK793JX"
 DOMAIN_NAME="ecs-instana.ullagallu.cloud"
+CERTIFICATE_ARN=$(aws acm list-certificates --query "CertificateSummaryList[?DomainName=='$DOMAIN_NAME'].CertificateArn" --output text)
 
 # 1. Delete HTTPS Listener
 HTTPS_LISTENER_ARN=$(aws elbv2 describe-listeners \
@@ -80,4 +81,39 @@ if [ "$DNS_VALUE" != "null" ]; then
     echo "Deleted Route 53 record for $DOMAIN_NAME"
 else
     echo "No DNS record found for $DOMAIN_NAME"
+fi
+
+# 8. Delete ACM DNS validation record
+ACM_DNS_RECORD=$(aws acm describe-certificate --certificate-arn $CERTIFICATE_ARN \
+    --query 'Certificate.DomainValidationOptions[0].ResourceRecord' \
+    --output json)
+
+VALIDATION_NAME=$(echo $ACM_DNS_RECORD | jq -r '.Name')
+VALIDATION_VALUE=$(echo $ACM_DNS_RECORD | jq -r '.Value')
+
+if [ "$VALIDATION_NAME" != "null" ] && [ "$VALIDATION_VALUE" != "null" ]; then
+    aws route53 change-resource-record-sets \
+      --hosted-zone-id $HOSTED_ZONE_ID \
+      --change-batch '{
+        "Changes": [{
+          "Action": "DELETE",
+          "ResourceRecordSet": {
+            "Name": "'$VALIDATION_NAME'",
+            "Type": "CNAME",
+            "TTL": 60,
+            "ResourceRecords": [{
+              "Value": "'$VALIDATION_VALUE'"
+            }]
+          }
+        }]
+      }'
+    echo "Deleted ACM DNS validation record: $VALIDATION_NAME"
+else
+    echo "No ACM DNS validation record found."
+fi
+
+# 9. Delete ACM Certificate
+if [ "$CERTIFICATE_ARN" != "None" ]; then
+    aws acm delete-certificate --certificate-arn $CERTIFICATE_ARN
+    echo "Deleted ACM Certificate: $CERTIFICATE_ARN"
 fi
