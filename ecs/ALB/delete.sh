@@ -51,21 +51,33 @@ aws ecs update-service \
 
 echo "Load Balancer removed from ECS service $SERVICE_NAME"
 
-# 6. Delete Route 53 Record
-aws route53 change-resource-record-sets \
-  --hosted-zone-id $HOSTED_ZONE_ID \
-  --change-batch '{
-    "Changes": [{
-      "Action": "DELETE",
-      "ResourceRecordSet": {
-        "Name": "'$DOMAIN_NAME'",
-        "Type": "CNAME",
-        "TTL": 1,
-        "ResourceRecords": [{
-          "Value": "'$LOAD_BALANCER_DNS'"
-        }]
-      }
-    }]
-  }'
+# 6. Get the current Route 53 DNS record
+CURRENT_DNS_RECORD=$(aws route53 list-resource-record-sets \
+    --hosted-zone-id $HOSTED_ZONE_ID \
+    --query "ResourceRecordSets[?Name == '$DOMAIN_NAME.'] | [0]" \
+    --output json)
 
-echo "Deleted Route 53 record for $DOMAIN_NAME"
+# Extract current DNS value
+DNS_VALUE=$(echo $CURRENT_DNS_RECORD | jq -r '.ResourceRecords[0].Value')
+
+if [ "$DNS_VALUE" != "null" ]; then
+    # 7. Delete Route 53 DNS record using current DNS value
+    aws route53 change-resource-record-sets \
+      --hosted-zone-id $HOSTED_ZONE_ID \
+      --change-batch '{
+        "Changes": [{
+          "Action": "DELETE",
+          "ResourceRecordSet": {
+            "Name": "'$DOMAIN_NAME'",
+            "Type": "CNAME",
+            "TTL": 1,
+            "ResourceRecords": [{
+              "Value": "'$DNS_VALUE'"
+            }]
+          }
+        }]
+      }'
+    echo "Deleted Route 53 record for $DOMAIN_NAME"
+else
+    echo "No DNS record found for $DOMAIN_NAME"
+fi
