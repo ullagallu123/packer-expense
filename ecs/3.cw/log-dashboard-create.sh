@@ -8,7 +8,7 @@ services=("mongo" "rabbit" "redis" "catalogue" "cart" "dispatch" "payment" "ship
 log_group_prefix="/ecs/"
 
 # Define dashboard name
-dashboard_name="Instana-Services-Log-Dashboard"
+dashboard_name="All-Services-Log-Dashboard"
 
 # Initialize widgets array
 widgets="["
@@ -20,7 +20,7 @@ for i in "${!services[@]}"; do
 
   widget=$(cat <<EOF
     {
-      "type": "log",
+      "type": "logs_insights",
       "x": $(($i % 2 * 12)),
       "y": $(($i / 2 * 6)),
       "width": 12,
@@ -28,7 +28,7 @@ for i in "${!services[@]}"; do
       "properties": {
         "logGroupNames": ["${log_group}"],
         "query": "fields @timestamp, @message | stats count() as logCount by bin(1h) | filter @timestamp > ago(1d)",
-        "title": "${service} Service Logs"
+        "title": "${service^} Service Logs"
       }
     }
 EOF
