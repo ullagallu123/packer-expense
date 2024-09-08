@@ -16,15 +16,17 @@ for i in "${!services[@]}"; do
   
   widget=$(cat <<EOF
     {
-      "type": "logs_insights_graph",
+      "type": "log",
       "x": $(($i % 2 * 12)),
       "y": $(($i / 2 * 6)),
       "width": 12,
       "height": 6,
       "properties": {
-        "logGroupNames": ["/ecs/${service}"],
-        "query": "fields @timestamp, @message | stats count() as logCount by bin(1h) | filter @timestamp > ago(1d)",
-        "title": "${service} Service Logs"
+        "query": {
+          "logGroupNames": ["/ecs/${service}"],
+          "query": "fields @timestamp, @message | stats count() as logCount by bin(1h) | filter @timestamp > ago(1d)",
+          "title": "${service} Service Logs"
+        }
       }
     }
 EOF
