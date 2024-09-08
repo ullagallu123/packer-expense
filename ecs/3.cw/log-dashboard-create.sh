@@ -10,19 +10,21 @@ dashboard_name="All-Services-Log-Dashboard"
 # Initialize widgets array
 widgets="["
 
-# Loop through each service to create a placeholder text widget
+# Loop through each service to create log insights widgets
 for i in "${!services[@]}"; do
   service="${services[$i]}"
   
   widget=$(cat <<EOF
     {
-      "type": "text",
+      "type": "log",
       "x": $(($i % 2 * 12)),
       "y": $(($i / 2 * 6)),
       "width": 12,
       "height": 6,
       "properties": {
-        "markdown": "### ${service} Logs\nLog widget for ${service} service."
+        "logGroupNames": ["/ecs/${service}"],
+        "query": "fields @timestamp, @message | stats count() as logCount by bin(1h) | filter @timestamp > ago(1d)",
+        "title": "${service} Service Logs"
       }
     }
 EOF
