@@ -57,12 +57,12 @@ ALB_DNS=$(aws elbv2 describe-load-balancers \
 
 echo "ALB DNS Name: $ALB_DNS"
 
-# 6. Create Route 53 DNS record for ALB
+# 6. Create Route 53 DNS record for ALB (Use UPSERT)
 aws route53 change-resource-record-sets \
   --hosted-zone-id $HOSTED_ZONE_ID \
   --change-batch '{
     "Changes": [{
-      "Action": "CREATE",
+      "Action": "UPSERT",
       "ResourceRecordSet": {
         "Name": "'$DOMAIN_NAME'",
         "Type": "CNAME",
@@ -74,7 +74,7 @@ aws route53 change-resource-record-sets \
     }]
   }'
 
-echo "Route 53 CNAME record created for $DOMAIN_NAME"
+echo "Route 53 CNAME record updated for $DOMAIN_NAME"
 
 # 7. Request ACM certificate and get CERTIFICATE_ARN dynamically
 CERTIFICATE_ARN=$(aws acm request-certificate \
@@ -86,7 +86,20 @@ CERTIFICATE_ARN=$(aws acm request-certificate \
 
 echo "ACM Certificate requested: $CERTIFICATE_ARN"
 
-# 8. Get DNS validation record
+# 8. Check ACM Certificate Status
+while true; do
+    STATUS=$(aws acm describe-certificate --certificate-arn $CERTIFICATE_ARN \
+        --query 'Certificate.Status' --output text)
+    if [ "$STATUS" == "ISSUED" ]; then
+        echo "ACM Certificate is ISSUED"
+        break
+    else
+        echo "Waiting for ACM Certificate to be ISSUED..."
+        sleep 30
+    fi
+done
+
+# 9. Get DNS validation record
 VALIDATION_RECORD=$(aws acm describe-certificate \
     --certificate-arn $CERTIFICATE_ARN \
     --query 'Certificate.DomainValidationOptions[0].ResourceRecord' \
@@ -101,7 +114,7 @@ if [ -z "$VALIDATION_NAME" ] || [ -z "$VALIDATION_VALUE" ]; then
     exit 1
 fi
 
-# 9. Add DNS validation record to Route 53
+# 10. Add DNS validation record to Route 53 (Use UPSERT)
 aws route53 change-resource-record-sets \
     --hosted-zone-id $HOSTED_ZONE_ID \
     --change-batch '{
@@ -120,7 +133,7 @@ aws route53 change-resource-record-sets \
 
 echo "DNS validation record added for $DOMAIN_NAME"
 
-# 10. Create HTTPS Listener with dynamic CERTIFICATE_ARN
+# 11. Create HTTPS Listener with dynamic CERTIFICATE_ARN
 aws elbv2 create-listener \
     --load-balancer-arn $LOAD_BALANCER_ARN \
     --protocol HTTPS \
