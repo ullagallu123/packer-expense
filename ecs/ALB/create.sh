@@ -95,6 +95,12 @@ VALIDATION_RECORD=$(aws acm describe-certificate \
 VALIDATION_NAME=$(echo $VALIDATION_RECORD | jq -r '.Name')
 VALIDATION_VALUE=$(echo $VALIDATION_RECORD | jq -r '.Value')
 
+# Check if the values are null
+if [ -z "$VALIDATION_NAME" ] || [ -z "$VALIDATION_VALUE" ]; then
+    echo "Failed to retrieve DNS validation record. Exiting."
+    exit 1
+fi
+
 # 9. Add DNS validation record to Route 53
 aws route53 change-resource-record-sets \
     --hosted-zone-id $HOSTED_ZONE_ID \
