@@ -48,7 +48,17 @@ aws ecs update-service \
     --cluster $CLUSTER_NAME \
     --service $SERVICE_NAME \
     --load-balancers "[]" \
-    --desired-count 0
+    --query 'service.desiredCount' --output text > DESIRED_COUNT
+
+DESIRED_COUNT=$(cat DESIRED_COUNT)
+aws ecs update-service \
+    --cluster $CLUSTER_NAME \
+    --service $SERVICE_NAME \
+    --load-balancers "[]" \
+    --desired-count $DESIRED_COUNT
+
+echo "Load Balancer removed from ECS service $SERVICE_NAME while maintaining desired count: $DESIRED_COUNT"
+
 
 echo "Load Balancer removed from ECS service $SERVICE_NAME"
 
