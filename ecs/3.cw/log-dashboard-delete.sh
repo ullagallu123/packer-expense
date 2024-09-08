@@ -10,6 +10,7 @@ dashboard_names=$(aws cloudwatch list-dashboards --region ${region} --query "Das
 for dashboard_name in ${dashboard_names}; do
   if [[ $dashboard_name == *"-log-dashboard" ]]; then
     echo "Deleting dashboard: ${dashboard_name}"
-    aws cloudwatch delete-dashboard --dashboard-name "${dashboard_name}" --region ${region}
+    aws cloudwatch delete-dashboards --dashboard-names "${dashboard_name}" --region ${region}
   fi
 done
+
