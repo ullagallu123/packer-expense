@@ -1,9 +1,13 @@
 #!/bin/bash
 
+# Variables
 USERID=$(id -u) # User id
 TIMESTAMP=$(date +%F-%H-%M-%S)
 SCRIPT_NAME=$(basename "$0" | cut -d "." -f1)
 LOG_FILE="/tmp/${TIMESTAMP}-${SCRIPT_NAME}.log"
+REPO_URL="https://github.com/ullagallu123/expense-backend.git"
+APP_DIR="/app"
+SERVICE_FILE="/etc/systemd/system/backend.service"
 
 # Colors for terminal output
 R="\e[31m"   # Red
@@ -34,16 +38,15 @@ else
     echo -e "${G}Here we go to installation${N}" | tee -a "$LOG_FILE"
 fi
 
+dnf update -y &>>"$LOG_FILE"
+LOG "Updating the packages" $?
+
+curl -fsSL https://rpm.nodesource.com/setup_20.x | bash - &>>"$LOG_FILE"
+LOG "Downloading Node.js setup script" $?
+
 # Install required packages
-dnf install git telnet mariadb105 nodejs20 -y &>>"$LOG_FILE"
-LOG "Installing git, telnet, MariaDB 10.5, and Node.js 20" $?
-
-# Create symbolic links for npm and node
-ln -sf /usr/bin/npm-20 /usr/bin/npm &>>"$LOG_FILE"
-LOG "Creating npm symbolic link" $?
-
-ln -sf /usr/bin/node-20 /usr/bin/node &>>"$LOG_FILE"
-LOG "Creating node symbolic link" $?
+dnf install git telnet nodejs -y &>>"$LOG_FILE"
+LOG "Installing git, telnet, and Node.js 20" $?
 
 # Add 'expense' user if not exists
 if ! id -u expense &>/dev/null; then
@@ -52,36 +55,36 @@ if ! id -u expense &>/dev/null; then
 fi
 
 # Clone backend repository if directory doesn't exist
-if [ ! -d "/app" ]; then
-    mkdir /app &>>"$LOG_FILE"
-    LOG "Creating directory /app" $?
+if [ ! -d "$APP_DIR" ]; then
+    mkdir "$APP_DIR" &>>"$LOG_FILE"
+    LOG "Creating directory $APP_DIR" $?
 
-    git clone https://github.com/ullagallu123/expense-backend.git /app &>>"$LOG_FILE"
-    LOG "Cloning expense-backend repository to /app" $?
+    git clone "$REPO_URL" "$APP_DIR" &>>"$LOG_FILE"
+    LOG "Cloning expense-backend repository to $APP_DIR" $?
 else
-    echo "Directory /app already exists. Skipping cloning." | tee -a "$LOG_FILE"
+    echo "Directory $APP_DIR already exists. Skipping cloning." | tee -a "$LOG_FILE"
 fi
 
 # Install dependencies for the backend
-cd /app && npm install &>>"$LOG_FILE"
+cd "$APP_DIR" && npm install &>>"$LOG_FILE"
 LOG "Installing npm dependencies for the backend" $?
 
 # Configure systemd service for backend
-cat <<EOF | tee /etc/systemd/system/backend.service &>>"$LOG_FILE"
+cat <<EOF | tee "$SERVICE_FILE" &>>"$LOG_FILE"
 [Unit]
 Description=Backend Service
 
 [Service]
 User=expense
-Environment="DB_HOST=expense.db.test.ullagallu.cloud"
-ExecStart=/usr/bin/node /app/index.js
+Environment="DB_HOST=spa-db.bapatlas.site"
+ExecStart=/usr/bin/node $APP_DIR/index.js
 SyslogIdentifier=backend
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-LOG "Creating systemd service file /etc/systemd/system/backend.service" $?
+LOG "Creating systemd service file $SERVICE_FILE" $?
 
 # Reload systemd daemon and start backend service
 systemctl daemon-reload &>>"$LOG_FILE"
@@ -90,9 +93,4 @@ LOG "Reloading systemd daemon" $?
 systemctl enable backend &>>"$LOG_FILE"
 LOG "Enabling backend service to start on boot" $?
 
-systemctl start backend &>>"$LOG_FILE"
-LOG "Start backend service" $?
-
 echo "Script execution completed successfully." | tee -a "$LOG_FILE"
-
-
