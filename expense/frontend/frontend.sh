@@ -62,7 +62,7 @@ cat <<EOF | tee /etc/nginx/default.d/expense.conf &>>"$LOG_FILE"
 proxy_http_version 1.1;
 
 location /api/ {
-    proxy_pass http://backend.test.ullagallu.cloud/;  # Ensure trailing slash
+    proxy_pass http://internal.bapatlas.site/;  # Ensure trailing slash
 }
 
 location /health {
