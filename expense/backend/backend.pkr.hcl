@@ -8,10 +8,10 @@ packer {
 }
 
 source "amazon-ebs" "amz2023" {
-  ami_name      = "backend-{{timestamp}}"
+  ami_name      = "siva-backend-{{timestamp}}"
   instance_type = "t2.micro"
   region        = "ap-south-1"
-  source_ami = "ami-0614680123427b75e"
+  source_ami = "ami-0fd05997b4dff7aac"
   ssh_username = "ec2-user"
 }
 
