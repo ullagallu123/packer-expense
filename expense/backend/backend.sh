@@ -76,7 +76,7 @@ Description=Backend Service
 
 [Service]
 User=expense
-Environment="DB_HOST=dev-expense.bapatlas.site"
+Environment="DB_HOST=dev-expense-rds.bapatlas.site"
 Environment="DB_USER=expense"
 Environment="DB_PWD=ExpenseApp@1"
 Environment="DB_DATABASE=transactions"
