@@ -16,15 +16,16 @@ data "aws_ami" "latest_amz3_gp3" {
 }
 
 source "amazon-ebs" "amz3_gp3" {
-  ami_name      = "frontend-{{timestamp}}"
+  ami_name      = "backend-{{timestamp}}"
   instance_type = "t2.micro"
   region        = "us-east-1"
   source_ami    = data.aws_ami.latest_amz3_gp3.id
   ssh_username  = "ec2-user"
+  
   block_device_mappings = [
     {
       device_name = "/dev/sda1"
-      ebs {
+      ebs = {
         volume_size = 8
         volume_type = "gp3"
       }
@@ -33,18 +34,18 @@ source "amazon-ebs" "amz3_gp3" {
 }
 
 build {
-  name    = "frontend"
+  name    = "backend"
   sources = ["source.amazon-ebs.amz3_gp3"]
 
   provisioner "file" {
-    source      = "agent.sh"
-    destination = "/tmp/agent.sh"
+    source      = ".sh"
+    destination = "/tmp/backend.sh"
   }
 
   provisioner "shell" {
     inline = [
-      "chmod +x /tmp/agent.sh",
-      "sudo /tmp/agent.sh"
+      "chmod +x /tmp/backend.sh",
+      "sudo /tmp/backend.sh"
     ]
   }
 }
