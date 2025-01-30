@@ -6,21 +6,22 @@ packer {
     }
   }
 }
-
-data "amazon-ami" "latest_amz3_gp3" {
-  most_recent = true
-  owners      = ["amazon"]
-  filters = {
-    name = "amzn3-ami-hvm-*-x86_64-gp3"
-  }
-}
-
 source "amazon-ebs" "amz3_gp3" {
   ami_name      = "backend-{{timestamp}}"
   instance_type = "t2.micro"
   region        = "us-east-1"
   source_ami    = data.amazon-ami.latest_amz3_gp3.id
   ssh_username  = "ec2-user"
+
+  source_ami_filter {
+    filters = {
+      name                = "amzn3-ami-hvm-*-x86_64-gp3"
+      root-device-type    = "ebs"
+      virtualization-type = "hvm"
+    }
+    most_recent = true
+    owners      = ["amazon"]
+  }
   
   block_device_mappings = [
     {
