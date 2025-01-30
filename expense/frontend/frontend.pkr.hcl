@@ -7,56 +7,37 @@ packer {
   }
 }
 
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-2023*"]
-  }
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-}
-
 source "amazon-ebs" "amz3_gp3" {
-  ami_name      = "backend-{{timestamp}}"
-  instance_type = "t2.micro"
+  ami_name      = "frontend-{{timestamp}}"
+  instance_type = "t3.micro"
   region        = "us-east-1"
-  source_ami    = data.aws_ami.amazon_linux.id
-  ssh_username  = "ec2-user"
   
-  block_device_mappings = [
-    {
-      device_name = "/dev/sda1"
-      ebs = {
-        volume_size = 8
-        volume_type = "gp3"
-      }
+  source_ami_filter {
+    filters = {
+      name                = "al2023-ami-2023*"
+      architecture        = "x86_64"
+      root-device-type    = "ebs"
     }
-  ]
+    most_recent = true
+    owners      = ["amazon"]
+  }
+  
+  ssh_username  = "ec2-user"
 }
 
 build {
-  name    = "backend"
+  name    = "frontend"
   sources = ["source.amazon-ebs.amz3_gp3"]
 
   provisioner "file" {
-    source      = ".sh"
-    destination = "/tmp/backend.sh"
+    source      = "agent.sh"
+    destination = "/tmp/agent.sh"
   }
 
   provisioner "shell" {
     inline = [
-      "chmod +x /tmp/backend.sh",
-      "sudo /tmp/backend.sh"
+      "chmod +x /tmp/agent.sh",
+      "sudo /tmp/agent.sh"
     ]
   }
 }
