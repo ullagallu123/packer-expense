@@ -22,16 +22,6 @@ source "amazon-ebs" "amz3_gp3" {
     owners      = ["amazon"]
   }
   ssh_username  = "ec2-user"
-  
-  block_device_mappings = [
-    {
-      device_name = "/dev/sda1"
-      ebs = {
-        volume_size = 8
-        volume_type = "gp3"
-      }
-    }
-  ]
 }
 
 build {
