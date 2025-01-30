@@ -15,8 +15,6 @@ source "amazon-ebs" "amz3_gp3" {
   source_ami_filter {
     filters = {
       name                = "al2023-ami-2023*"
-      root-device-type    = "ebs"
-      virtualization-type = "hvm"
     }
     most_recent = true
     owners      = ["amazon"]
