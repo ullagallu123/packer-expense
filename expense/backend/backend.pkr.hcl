@@ -6,18 +6,17 @@ packer {
     }
   }
 }
-
-
 source "amazon-ebs" "amz3_gp3" {
   ami_name      = "backend-{{timestamp}}"
   instance_type = "t3.micro"
   region        = "us-east-1"
   source_ami_filter {
-  filters = {
-    name = "amzn2-ami-2023*"
-  most_recent = true
-  owners      = ["amazon"]
-}
+    filters = {
+      name = "amzn2-ami-2023*"
+    }
+    most_recent = true
+    owners      = ["amazon"]
+  }
   ssh_username  = "ec2-user"
 }
 
