@@ -1,9 +1,28 @@
 packer {
   required_plugins {
     amazon = {
-      version = ">= 1.2.8"
       source  = "github.com/hashicorp/amazon"
+      version = "~> 1"
     }
+  }
+}
+
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023*"]
+  }
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
   }
 }
 
@@ -11,16 +30,18 @@ source "amazon-ebs" "amz3_gp3" {
   ami_name      = "backend-{{timestamp}}"
   instance_type = "t2.micro"
   region        = "us-east-1"
-  source_ami_filter {
-    filters = {
-      name                = "amzn3-ami-hvm-*-x86_64-gp3"
-      root-device-type    = "ebs"
-      virtualization-type = "hvm"
-    }
-    most_recent = true
-    owners      = ["amazon"]
-  }
+  source_ami    = data.aws_ami.amazon_linux.id
   ssh_username  = "ec2-user"
+  
+  block_device_mappings = [
+    {
+      device_name = "/dev/sda1"
+      ebs = {
+        volume_size = 8
+        volume_type = "gp3"
+      }
+    }
+  ]
 }
 
 build {
