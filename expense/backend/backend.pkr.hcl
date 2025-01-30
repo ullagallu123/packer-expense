@@ -7,7 +7,7 @@ packer {
   }
 }
 
-data "aws_ami" "latest_amz3_gp3" {
+data "amazon-ami" "latest_amz3_gp3" {
   most_recent = true
   owners      = ["amazon"]
   filters = {
@@ -19,7 +19,7 @@ source "amazon-ebs" "amz3_gp3" {
   ami_name      = "backend-{{timestamp}}"
   instance_type = "t2.micro"
   region        = "us-east-1"
-  source_ami    = data.aws_ami.latest_amz3_gp3.id
+  source_ami    = data.amazon-ami.latest_amz3_gp3.id
   ssh_username  = "ec2-user"
   
   block_device_mappings = [
