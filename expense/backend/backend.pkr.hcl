@@ -7,30 +7,20 @@ packer {
   }
 }
 
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-2023*"]
-  }
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-}
 
 source "amazon-ebs" "amz3_gp3" {
   ami_name      = "backend-{{timestamp}}"
   instance_type = "t2.micro"
   region        = "us-east-1"
-  source_ami    = data.aws_ami.amazon_linux.id
+  source_ami_filter {
+    filters = {
+      name                = "al2023-ami-2023*"
+      root-device-type    = "ebs"
+      virtualization-type = "hvm"
+    }
+    most_recent = true
+    owners      = ["amazon"]
+  }
   ssh_username  = "ec2-user"
   
   block_device_mappings = [
