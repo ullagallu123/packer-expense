@@ -7,7 +7,6 @@ packer {
   }
 }
 
-# Fetch the latest Amazon Linux 3 AMI with gp3
 source "amazon-ebs" "amz3_gp3" {
   ami_name      = "backend-{{timestamp}}"
   instance_type = "t2.micro"
