@@ -8,7 +8,7 @@ packer {
 }
 
 source "amazon-ebs" "amz3_gp3" {
-  ami_name      = "frontend-{{timestamp}}"
+  ami_name      = "sivaf-{{timestamp}}"
   instance_type = "t3.micro"
   region        = "us-east-1"
   
@@ -26,7 +26,7 @@ source "amazon-ebs" "amz3_gp3" {
 }
 
 build {
-  name    = "frontend"
+  name    = "sivaf"
   sources = ["source.amazon-ebs.amz3_gp3"]
 
   provisioner "file" {
