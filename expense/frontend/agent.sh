@@ -62,7 +62,7 @@ cat <<EOF | tee /etc/nginx/default.d/expense.conf &>>"$LOG_FILE"
 proxy_http_version 1.1;
 
 location /api/ {
-    proxy_pass http://qa-expense-internal.bapatlas.site/;  # Ensure trailing slash
+    proxy_pass http://dev-expense-internal.bapatlas.site/;  # Ensure trailing slash
 }
 
 location /health {
@@ -72,10 +72,6 @@ location /health {
 EOF
 
 LOG "Creating NGINX configuration file /etc/nginx/default.d/expense.conf" $?
-
-# Restart Nginx to apply changes
-systemctl restart nginx &>>"$LOG_FILE"
-LOG "Restarting nginx service" $?
 
 # Configure CloudWatch Agent
 cat <<EOF | tee /opt/aws/amazon-cloudwatch-agent/bin/config.json
