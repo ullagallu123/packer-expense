@@ -21,8 +21,17 @@ source "amazon-ebs" "amz3_gp3" {
     most_recent = true
     owners      = ["amazon"]
   }
-  
+
   ssh_username  = "ec2-user"
+
+  # Adding tags to the AMI
+  tags = {
+    Name        = "sivab-packer-image"
+    Environment = "Development"
+    Owner       = "Konka"
+    CreatedBy   = "Packer"
+    Monitor     = "true"
+  }
 }
 
 build {
@@ -30,14 +39,14 @@ build {
   sources = ["source.amazon-ebs.amz3_gp3"]
 
   provisioner "file" {
-    source      = "agent.sh"
-    destination = "/tmp/agent.sh"
+    source      = "backend.sh"
+    destination = "/tmp/backend.sh"
   }
 
   provisioner "shell" {
     inline = [
-      "chmod +x /tmp/agent.sh",
-      "sudo /tmp/agent.sh"
+      "chmod +x /tmp/backend.sh",
+      "sudo /tmp/backend.sh"
     ]
   }
 }
