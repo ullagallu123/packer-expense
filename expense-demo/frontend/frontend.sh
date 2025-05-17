@@ -57,20 +57,4 @@ else
     echo "Directory /usr/share/nginx/html already contains a Git repository. Skipping cloning." | tee -a "$LOG_FILE"
 fi
 
-# Configure NGINX for the frontend
-cat <<EOF | tee /etc/nginx/default.d/expense.conf &>>"$LOG_FILE"
-proxy_http_version 1.1;
-
-location /api/ {
-    proxy_pass http://qa-expense-internal.bapatlas.site/;  # Ensure trailing slash
-}
-
-location /health {
-    stub_status on;
-    access_log off;
-}
-EOF
-
-LOG "Creating NGINX configuration file /etc/nginx/default.d/expense.conf" $?
-
 echo "Script execution completed successfully." | tee -a "$LOG_FILE"
