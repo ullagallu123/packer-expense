@@ -67,8 +67,4 @@ LOG "Running npm build" $?
 cp -r dist /usr/share/nginx/html &>>"$LOG_FILE"
 LOG "Copying build to /usr/share/nginx/html" $?
 
-# Restart nginx
-systemctl restart nginx &>>"$LOG_FILE"
-LOG "Restart the nginx server" $?
-
 echo -e "${G}Frontend deployment complete.${N}" | tee -a "$LOG_FILE"
