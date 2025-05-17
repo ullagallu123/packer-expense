@@ -7,8 +7,8 @@ SCRIPT_NAME=$(basename "$0" | cut -d "." -f1)
 LOG_FILE="/tmp/${TIMESTAMP}-${SCRIPT_NAME}.log"
 REPO_URL="https://github.com/sivaramakrishna-konka/3-tier-vm-backend.git"
 APP_DIR="/app"
-SERVICE_FILE="/etc/systemd/system/backend.service"
-CW_CONFIG_FILE="/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json"
+# SERVICE_FILE="/etc/systemd/system/backend.service"
+# CW_CONFIG_FILE="/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json"
 
 # Colors for terminal output
 R="\e[31m"   # Red
@@ -70,73 +70,73 @@ fi
 cd "$APP_DIR" && npm install &>>"$LOG_FILE"
 LOG "Installing npm dependencies for the backend" $?
 
-# Configure systemd service for backend
-cat <<EOF | tee "$SERVICE_FILE" &>>"$LOG_FILE"
-[Unit]
-Description=Backend Service
+# # Configure systemd service for backend
+# cat <<EOF | tee "$SERVICE_FILE" &>>"$LOG_FILE"
+# [Unit]
+# Description=Backend Service
 
-[Service]
-User=expense
-Environment="DB_HOST=test-db.konkas.tech"
-Environment="DB_USER=crud"
-Environment="DB_PASSWORD=CrudApp@1"
-Environment="DB_NAME=crud_app"
-Environment="REDIS_HOST=test-redis.konkas.tech"
-Environment="REDIS_PORT=6379"
-ExecStart=/usr/bin/node $APP_DIR/index.js
-SyslogIdentifier=backend
+# [Service]
+# User=expense
+# Environment="DB_HOST=test-db.konkas.tech"
+# Environment="DB_USER=crud"
+# Environment="DB_PASSWORD=CrudApp@1"
+# Environment="DB_NAME=crud_app"
+# Environment="REDIS_HOST=test-redis.konkas.tech"
+# Environment="REDIS_PORT=6379"
+# ExecStart=/usr/bin/node $APP_DIR/index.js
+# SyslogIdentifier=backend
 
 
-[Install]
-WantedBy=multi-user.target
-EOF
+# [Install]
+# WantedBy=multi-user.target
+# EOF
 
-LOG "Creating systemd service file $SERVICE_FILE" $?
+# LOG "Creating systemd service file $SERVICE_FILE" $?
 
-# Reload systemd daemon and start backend service
-systemctl daemon-reload &>>"$LOG_FILE"
-LOG "Reloading systemd daemon" $?
+# # Reload systemd daemon and start backend service
+# systemctl daemon-reload &>>"$LOG_FILE"
+# LOG "Reloading systemd daemon" $?
 
-systemctl enable backend &>>"$LOG_FILE"
-LOG "Enabling backend service to start on boot" $?
+# systemctl enable backend &>>"$LOG_FILE"
+# LOG "Enabling backend service to start on boot" $?
 
-# Configure CloudWatch Agent
-cat <<EOF | tee "$CW_CONFIG_FILE" &>>"$LOG_FILE"
-{
-  "agent": {
-    "metrics_collection_interval": 60,
-    "logfile": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"
-  },
-  "logs": {
-    "logs_collected": {
-      "files": {
-        "collect_list": [
-          {
-            "file_path": "/var/log/messages",
-            "log_group_name": "backend-log-group",
-            "log_stream_name": "{instance_id}",
-            "timestamp_format": "%b %d %H:%M:%S"
-          },
-          {
-            "file_path": "/tmp/${TIMESTAMP}-${SCRIPT_NAME}.log",
-            "log_group_name": "backend-installation-log",
-            "log_stream_name": "{instance_id}",
-            "timestamp_format": "%Y-%m-%d-%H-%M-%S"
-          }
-        ]
-      }
-    }
-  }
-}
-EOF
+# # Configure CloudWatch Agent
+# cat <<EOF | tee "$CW_CONFIG_FILE" &>>"$LOG_FILE"
+# {
+#   "agent": {
+#     "metrics_collection_interval": 60,
+#     "logfile": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"
+#   },
+#   "logs": {
+#     "logs_collected": {
+#       "files": {
+#         "collect_list": [
+#           {
+#             "file_path": "/var/log/messages",
+#             "log_group_name": "backend-log-group",
+#             "log_stream_name": "{instance_id}",
+#             "timestamp_format": "%b %d %H:%M:%S"
+#           },
+#           {
+#             "file_path": "/tmp/${TIMESTAMP}-${SCRIPT_NAME}.log",
+#             "log_group_name": "backend-installation-log",
+#             "log_stream_name": "{instance_id}",
+#             "timestamp_format": "%Y-%m-%d-%H-%M-%S"
+#           }
+#         ]
+#       }
+#     }
+#   }
+# }
+# EOF
 
-LOG "Creating CloudWatch Agent configuration file" $?
+# LOG "Creating CloudWatch Agent configuration file" $?
 
-# Start and enable CloudWatch Agent
-systemctl enable amazon-cloudwatch-agent &>>"$LOG_FILE"
-LOG "Enabling CloudWatch Agent to start on boot" $?
+# # Start and enable CloudWatch Agent
+# systemctl enable amazon-cloudwatch-agent &>>"$LOG_FILE"
+# LOG "Enabling CloudWatch Agent to start on boot" $?
 
-systemctl restart amazon-cloudwatch-agent &>>"$LOG_FILE"
-LOG "Restarting CloudWatch Agent" $?
+# systemctl restart amazon-cloudwatch-agent &>>"$LOG_FILE"
+# LOG "Restarting CloudWatch Agent" $?
 
 echo "Script execution completed successfully." | tee -a "$LOG_FILE"
