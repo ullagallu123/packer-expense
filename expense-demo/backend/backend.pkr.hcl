@@ -39,14 +39,14 @@ build {
   sources = ["source.amazon-ebs.amz3_gp3"]
 
   provisioner "file" {
-    source      = "backend.sh"
-    destination = "/tmp/backend.sh"
+    source      = "agent.sh"
+    destination = "/tmp/agent.sh"
   }
 
   provisioner "shell" {
     inline = [
-      "chmod +x /tmp/backend.sh",
-      "sudo /tmp/backend.sh"
+      "chmod +x /tmp/agent.sh",
+      "sudo /tmp/agent.sh"
     ]
   }
 }
