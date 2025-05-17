@@ -1,20 +1,19 @@
 #!/bin/bash
 
-USERID=$(id -u) # User id
+USERID=$(id -u)
 TIMESTAMP=$(date +%F-%H-%M-%S)
 SCRIPT_NAME=$(basename "$0" | cut -d "." -f1)
 LOG_FILE="/tmp/${TIMESTAMP}-${SCRIPT_NAME}.log"
 
-# Colors for terminal output
-R="\e[31m"   # Red
-G="\e[32m"   # Green
-Y="\e[33m"   # Yellow
-N="\e[0m"    # Reset
+# Colors
+R="\e[31m"
+G="\e[32m"
+Y="\e[33m"
+N="\e[0m"
 
-echo "Script started executing at: $TIMESTAMP"
-echo "Log file: $LOG_FILE"
+echo "Started at: $TIMESTAMP"
+echo "Log: $LOG_FILE"
 
-# Function to log command success or failure
 LOG() {
     local MESSAGE="$1"
     local STATUS="$2"
@@ -26,35 +25,50 @@ LOG() {
     fi
 }
 
-# Check if the script is run as root
-if [ $USERID -ne 0 ]; then
-    echo -e "${R}Please run this script with sudo privileges${N}" | tee -a "$LOG_FILE"
+# Check root
+if [ "$USERID" -ne 0 ]; then
+    echo -e "${R}Run with sudo/root${N}" | tee -a "$LOG_FILE"
     exit 1
-else
-    echo -e "${G}Here we go to installation${N}" | tee -a "$LOG_FILE"
 fi
 
-# Install required packages
-dnf install git telnet nginx -y &>>"$LOG_FILE"
-LOG "Installing git, telnet, and nginx" $?
+echo -e "${G}Starting frontend setup...${N}" | tee -a "$LOG_FILE"
 
-# Enable and start nginx service
+# Install Node.js and Nginx
+dnf install -y nginx git &>>"$LOG_FILE"
+LOG "Installing Nginx and Git" $?
+
+curl -fsSL https://rpm.nodesource.com/setup_20.x | bash - &>>"$LOG_FILE"
+dnf install -y nodejs &>>"$LOG_FILE"
+LOG "Installing Node.js" $?
+
+# Enable and start Nginx
 systemctl enable nginx &>>"$LOG_FILE"
-LOG "Enabling nginx service" $?
-
+LOG "Enabling Nginx" $?
 systemctl start nginx &>>"$LOG_FILE"
-LOG "Starting nginx service" $?
+LOG "Starting Nginx" $?
 
-# Clear nginx HTML directory
+# Clear existing html
 rm -rf /usr/share/nginx/html/* &>>"$LOG_FILE"
-LOG "Clearing /usr/share/nginx/html directory" $?
+LOG "Clearing Nginx HTML folder" $?
 
-# Clone frontend repository into nginx HTML directory
-if [ ! -d "/usr/share/nginx/html/.git" ]; then
-    cd /usr/share/nginx/html && git clone https://github.com/sivaramakrishna-konka/3-tier-vm-frontend.git . &>>"$LOG_FILE"
-    LOG "Cloning expense-frontend repository into /usr/share/nginx/html" $?
-else
-    echo "Directory /usr/share/nginx/html already contains a Git repository. Skipping cloning." | tee -a "$LOG_FILE"
-fi
+# Clone and build frontend
+cd /tmp
+git clone https://github.com/sivaramakrishna-konka/3-tier-vm-frontend.git frontend-app &>>"$LOG_FILE"
+LOG "Cloning frontend repo" $?
 
-echo "Script execution completed successfully." | tee -a "$LOG_FILE"
+cd frontend-app
+npm install &>>"$LOG_FILE"
+LOG "Running npm install" $?
+
+npm run build &>>"$LOG_FILE"
+LOG "Running npm build" $?
+
+# Copy built files to nginx
+cp -r dist /usr/share/nginx/html &>>"$LOG_FILE"
+LOG "Copying build to /usr/share/nginx/html" $?
+
+# Restart nginx
+systemctl restart nginx &>>"$LOG_FILE"
+LOG "Restart the nginx server" $?
+
+echo -e "${G}Frontend deployment complete.${N}" | tee -a "$LOG_FILE"
