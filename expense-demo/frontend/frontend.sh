@@ -64,7 +64,7 @@ npm run build &>>"$LOG_FILE"
 LOG "Running npm build" $?
 
 # Copy built files to nginx
-cp -r dist /usr/share/nginx/html &>>"$LOG_FILE"
+cp -r dist/* /usr/share/nginx/html/ &>>"$LOG_FILE"
 LOG "Copying build to /usr/share/nginx/html" $?
 
 echo -e "${G}Frontend deployment complete.${N}" | tee -a "$LOG_FILE"
