@@ -51,7 +51,7 @@ LOG "Clearing /usr/share/nginx/html directory" $?
 
 # Clone frontend repository into nginx HTML directory
 if [ ! -d "/usr/share/nginx/html/.git" ]; then
-    cd /usr/share/nginx/html && git clone https://github.com/ullagallu123/expense-frontend.git . &>>"$LOG_FILE"
+    cd /usr/share/nginx/html && git clone https://github.com/sivaramakrishna-konka/3-tier-vm-frontend.git . &>>"$LOG_FILE"
     LOG "Cloning expense-frontend repository into /usr/share/nginx/html" $?
 else
     echo "Directory /usr/share/nginx/html already contains a Git repository. Skipping cloning." | tee -a "$LOG_FILE"
