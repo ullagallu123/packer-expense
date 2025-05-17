@@ -31,13 +31,13 @@ build {
 
   provisioner "file" {
     source      = "agent.sh"
-    destination = "/tmp/agent.sh"
+    destination = "/tmp/frontend.sh"
   }
 
   provisioner "shell" {
     inline = [
-      "chmod +x /tmp/agent.sh",
-      "sudo /tmp/agent.sh"
+      "chmod +x /tmp/frontend.sh",
+      "sudo /tmp/frontend.sh"
     ]
   }
 }
