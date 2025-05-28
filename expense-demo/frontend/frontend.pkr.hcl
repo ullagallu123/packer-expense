@@ -23,6 +23,14 @@ source "amazon-ebs" "amz3_gp3" {
   }
   
   ssh_username  = "ec2-user"
+  # Adding tags to the AMI
+  tags = {
+    Name        = "sivaf-packer-image"
+    Environment = "Development"
+    Owner       = "Konka"
+    CreatedBy   = "Packer"
+    Monitor     = "true"
+  }
 }
 
 build {
